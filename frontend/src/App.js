@@ -7,9 +7,9 @@ class App extends Component {
         return (
 
             <div className="App">
-                <p>
+                <h2>
                     Prosciutto di hackerspace
-                </p>
+                </h2>
                 <div>
                     <Sensors/>
                 </div>

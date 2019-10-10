@@ -24,8 +24,8 @@ class Sensors extends Component {
     };
 
     // bgTemp = ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)'];
-    bgTemp = ['rgba(145,79,79,0.2)', 'rgba(255, 99, 132, 0.2)', 'rgba(255, 99, 132, 0.2)', 'rgba(255, 99, 132, 0.2)'];
-    bgHumidity = ['rgba(45,66,125,0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(54, 162, 235, 0.2)'];
+    bgTemp = ['rgba(170,99,99,0.2)', 'rgba(255, 99, 132, 0.2)', 'rgba(255, 99, 132, 0.2)', 'rgba(255, 99, 132, 0.2)'];
+    bgHumidity = ['rgba(59,93,170,0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(54, 162, 235, 0.2)'];
     borderColors = ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)'];
 
     constructor() {
@@ -48,7 +48,8 @@ class Sensors extends Component {
                         data: sensors.filter(r => r.sensorID === sensorIDs[i]).map(r => r.temperature),
                         backgroundColor: this.bgTemp[i],
                         borderColor: this.borderColors[0],
-                        borderWidth: 0.2
+                        borderWidth: 0.2,
+                        pointRadius: 1.0
                     };
 
                     datasets_humidity[i] = {
@@ -56,7 +57,8 @@ class Sensors extends Component {
                         data: sensors.filter(r => r.sensorID === sensorIDs[i]).map(r => r.humidity),
                         backgroundColor: this.bgHumidity[i],
                         borderColor: this.borderColors[1],
-                        borderWidth: 0.1
+                        borderWidth: 0.1,
+                        pointRadius: 1.0
                     }
                 }
                 console.log(datasets_temperature);

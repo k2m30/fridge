@@ -15,3 +15,9 @@
 in other terminal
 
 `cd .. && cd frontend && npm start`
+
+### Run in production
+
+`cd hardware && nohup node index.js > /dev/null 2>../hardware.log &`
+
+`cd .. && cd frontend && `

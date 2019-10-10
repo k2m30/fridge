@@ -61,6 +61,11 @@ function loop() {
     let r3 = readBME280(bme280_3);
     let r4 = readBME280(bme280_4);
 
+    console.log((r1));
+    console.log((r2));
+    console.log((r3));
+    console.log((r4));
+
     Reading.create(r1);
     Reading.create(r2);
     Reading.create(r3);

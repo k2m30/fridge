@@ -34,7 +34,7 @@ class Sensors extends Component {
 
     getData() {
         let datasets = [], sensorIDs = [1, 3, 4, 5];
-        fetch('http://localhost:3000/sensors').then((res) => {
+        fetch('http://' + window.location.hostname + ':3000/sensors').then((res) => {
             return res.json();
         }).then((sensors) => {
                 for (let i = 0; i < 4; i++) {

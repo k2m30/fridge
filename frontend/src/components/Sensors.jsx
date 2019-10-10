@@ -35,7 +35,11 @@ class Sensors extends Component {
     }
 
     componentDidMount() {
-        setInterval(() => this.getData(), 10000)
+        this.interval = setInterval(() => this.getData(), 30000)
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
     }
 
     getData() {

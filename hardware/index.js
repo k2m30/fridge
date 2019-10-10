@@ -39,7 +39,7 @@ function turnCoolingIfNeeded(r1, r2, r3, r4) {
 function readBME280(device) {
     device.getDataFromDeviceSync();
     return {
-        sensorID: device.device.bus._busNumber,
+        sensorID: device.device.bus,
         temperature: device.device.parameters[1].value,
         pressure: device.device.parameters[0].value,
         humidity: device.device.parameters[2].value

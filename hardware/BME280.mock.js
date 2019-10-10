@@ -1,9 +1,3 @@
-class Bus {
-    constructor(busNumber) {
-        this._busNumber = busNumber;
-    }
-}
-
 module.exports = class BME280 {
     constructor(options) {
         let opts = options || {};
@@ -12,7 +6,7 @@ module.exports = class BME280 {
         this.device.name = (opts.hasOwnProperty('name')) ? opts.name : 'BME280';
         this.device.type = (opts.hasOwnProperty('type')) ? opts.type : 'sensor';
         this.device.active = false;
-        this.device.bus = new Bus((opts.hasOwnProperty('bus')) ? opts.bus : 1);
+        this.device.bus = opts.hasOwnProperty('bus') ? opts.bus : 1;
         this.device.addr = (opts.hasOwnProperty('addr')) ? opts.addr : 0x76;
         this.device.elevation = (opts.hasOwnProperty('elevation')) ? Number(opts.elevation) : 0;
         this.device.mode = (opts.hasOwnProperty('mode')) ? opts.mode : 'forced';

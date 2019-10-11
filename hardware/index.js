@@ -80,18 +80,21 @@ const app = express();
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 app.get('/sensors', (req, res) => {
-    db.Reading.findAll({
+    Reading.findAll({
         limit: 1200, order: [['id', 'DESC']]
     }).then(readings => {
         res.json(readings.reverse());
     });
 });
 
-app.get('/', (req, res) => {
-    db.Reading.findAll({limit: 300}).then(readings => {
-        res.json(readings);
+app.get('/thresholds', (req, res) => {
+    Settings.findAll().then(settings => {
+        console.log(settings);
+        res.json(settings[0]);
+        // res.json(settings[0]);
     });
 });
+
 
 
 app.listen(3000, () => console.log(`Example app listening on port 3000!`));

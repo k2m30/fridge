@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import './App.css';
 import Sensors from "./components/Sensors";
+import Controls from "./components/Controls";
 
 class App extends Component {
     render() {
@@ -10,9 +11,8 @@ class App extends Component {
                 <h2>
                     Prosciutto di hackerspace
                 </h2>
-                <div>
-                    <Sensors/>
-                </div>
+                <div><Sensors/></div>
+                <div><Controls/></div>
             </div>
 
         );

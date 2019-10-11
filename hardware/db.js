@@ -47,8 +47,39 @@ module.exports = {
             // options
         });
 
+        this.Setting.init({
+                tLow: {
+                    type: SQLite3.FLOAT,
+                    allowNull: false
+                },
+                tHigh: {
+                    type: SQLite3.FLOAT,
+                    allowNull: false
+                },
+                hLow: {
+                    type: SQLite3.FLOAT,
+                    allowNull: false
+                },
+                hHigh: {
+                    type: SQLite3.FLOAT,
+                    allowNull: false
+                },
+            },
+            {
+                sequelize
+            });
+
         // this.Reading.sync({force: true}).then(() => {
         this.Reading.sync().then(() => {
+        });
+
+        // this.Setting.sync({force: true}).then(() => {
+        this.Setting.sync().then(() => {
+            this.Setting.findAndCountAll().then(res => {
+                if (res.count === 0) {
+                    this.Setting.create({tLow: 10.0, tHigh: 14.5, hLow: 30.0, hHigh: 50.0});
+                }
+            });
         });
     },
 };

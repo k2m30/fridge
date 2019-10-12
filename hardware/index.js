@@ -78,6 +78,8 @@ function loop() {
 
 const app = express();
 app.use(cors());
+app.use(express.json()); // for parsing application/json
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.get('/sensors', (req, res) => {
     Reading.findAll({
@@ -89,12 +91,21 @@ app.get('/sensors', (req, res) => {
 
 app.get('/thresholds', (req, res) => {
     Settings.findAll().then(settings => {
-        console.log(settings);
-        res.json(settings[0]);
-        // res.json(settings[0]);
+        return res.json(settings[0]);
     });
 });
 
+app.post('/thresholds', (req, res, next) => {
+    Settings.findAll().then(settings => settings[0]).then(settings => {
+        console.log(req.body);
+        settings.update(req.body)
+    });
+});
+
+// app.post('/thresholds', function (req, res, next) {
+//     console.log(req.body)
+//     res.json(req.body)
+// });
 
 
 app.listen(3000, () => console.log(`Example app listening on port 3000!`));

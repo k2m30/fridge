@@ -30,7 +30,7 @@ class Controls extends Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(body)
-        }).catch(err => console.log(err));
+        }).catch(err => console.log("Error:" + err));
     }
 
     render() {

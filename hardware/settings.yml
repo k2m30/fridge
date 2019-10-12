@@ -1,6 +1,0 @@
-temperature:
-  min: 10.0
-  max: 12.0
-humidity:
-  min: 60.0
-  max: 70.0

@@ -1,5 +1,6 @@
 os = require('os');
-const COOLING_PIN = 7;
+const FRIDGE_PIN = 16;
+const FAN_PIN = 12;
 
 
 function getBME280() {
@@ -24,21 +25,35 @@ const gpio = getGPIO();
 
 module.exports = {
     initGPIO: function () {
-        gpio.setup(COOLING_PIN, gpio.DIR_OUT, gpio.EDGE_NONE, function () {
-            gpio.write(COOLING_PIN, false, null);
+        gpio.setup(FRIDGE_PIN, gpio.DIR_OUT, gpio.EDGE_NONE, function () {
+            gpio.write(FRIDGE_PIN, false, null);
         }); // cooling
     },
-    turnCoolingOn: function () {
-        gpio.write(COOLING_PIN, true, function (err) {
+    turnFanOn: function () {
+        gpio.write(FAN_PIN, true, function (err) {
             if (err) throw err;
-            console.log('Written to pin');
+            console.warn('Fan on');
+        });
+    },
+
+    turnFanOff: function () {
+        gpio.write(FAN_PIN, false, function (err) {
+            if (err) throw err;
+            console.warn('Fan off');
+        });
+    },
+
+    turnCoolingOn: function () {
+        gpio.write(FRIDGE_PIN, false, function (err) {
+            if (err) throw err;
+            console.warn('Cooling on');
         });
     },
 
     turnCoolingOff: function () {
-        gpio.write(COOLING_PIN, false, function (err) {
+        gpio.write(FRIDGE_PIN, true, function (err) {
             if (err) throw err;
-            console.log('Written to pin');
+            console.warn('Cooling off');
         });
     },
     BME280: getBME280(),

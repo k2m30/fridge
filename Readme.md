@@ -45,7 +45,7 @@ git push && ssh pi@fridge.local 'cd fridge && git pull'
 |   |   | |7 | 8 | |  | 
 |   |   | |9 | 10 | |  | 
 | White  | RST (Disp)  | 17 |11 | 12 |18 | Door IN | Yellow
-| Blue   | Relay 1  | |13 | 14 | |  | 
+| Blue   | Relay 1  | 27|13 | 14 | |  | 
 |   |   | |15 | 16 | |  | 
 |   |   | |17 | 18 | 24 | Busy (Disp) | Violet 
 | Blue   | DIN (Disp)  | MOSI |19 | 20 | |  | 
@@ -54,9 +54,9 @@ git push && ssh pi@fridge.local 'cd fridge && git pull'
 |   |   | |25 | 26 | |  | 
 |   |   | |27 | 28 | |  | 
 |   |   | |29 | 30 | |  | 
-| Yellow  | SDA5 (Sensor 2)  | 6 |31 | 32 | | Relay 2 (Fan) | Green 
+| Yellow  | SDA5 (Sensor 2)  | 6 |31 | 32 |12 | Relay 2 (Fan) | Green 
 | White  | SCL5 (Sensor 2)  |13 |33 | 34 | | GND | 
-| Yellow  | SDA3 (Sensor 3)  | 19|35 | 36 | | Relay 3 (Fridge) | Yellow
+| Yellow  | SDA3 (Sensor 3)  | 19|35 | 36 |16 | Relay 3 (Fridge) | Yellow
 | White  | SCL3 (sensor 3)  | 26|37 | 38 | | SDA4 (Sensor 1) | Yellow
 |   | GND  | |39 | 40 | | SCL4 (Sensor 1) | White
 

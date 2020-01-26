@@ -51,6 +51,21 @@ function turnSonicIfNeeded(r1, r2, r3, r4) {
 }
 
 function turnFanIfNeeded(r1, r2, r3, r4) {
+    Settings.findAll().then(settings => settings[0]).then(s => {
+        const humidities = [r1.humidity, r2.humidity, r3.humidity, r4.humidity];
+        const max = Math.max(...humidities);
+        const min = Math.min(...humidities);
+        const p = (humidities.reduce((sum, x) => sum + x) - min - max) / 2.0;
+
+        if (p > s.hHigh) {
+            hw.turnFanOff();
+        }
+
+        if (p < s.hLow) {
+            hw.turnFanOn();
+        }
+
+    });
 
 }
 
@@ -95,7 +110,7 @@ app.post('/thresholds', (req, res, next) => {
     });
 });
 
-app.listen(3000, () => console.log(`Example app listening on port 3000!`));
+app.listen(3000, () => console.log(`Fridge app listening on port 3000!`));
 
 
 setInterval(loop, 60000);

@@ -26,8 +26,9 @@ const gpio = getGPIO();
 module.exports = {
     initGPIO: function () {
         gpio.setup(FRIDGE_PIN, gpio.DIR_OUT, gpio.EDGE_NONE, function () {
-            gpio.write(FRIDGE_PIN, false, null);
         }); // cooling
+        gpio.setup(FAN_PIN, gpio.DIR_OUT, gpio.EDGE_NONE, function () {
+        }); // FAN
     },
     turnFanOn: function () {
         gpio.write(FAN_PIN, true, function (err) {

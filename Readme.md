@@ -26,7 +26,12 @@ in other terminal
 
 `./start.sh`
 
-### pinout
+## Deploy
+```
+git push && ssh pi@fridge.local 'cd fridge && git pull'
+```
+
+## Pinout
 
 | Color  | Name | BCM  | HW | HW  | BCM | Name  | Color |
 | --- | --- |--- | --- |--- | --- |--- | --- |

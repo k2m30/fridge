@@ -16,6 +16,12 @@ in other terminal
 
 `cd .. && cd frontend && npm start`
 
+### Open in browser
+
+`http://fridge.local:3000/sensors` – raw data
+
+`http://fridge.local:3001` – GUI
+
 ### Run in production
 
 `./start.sh`

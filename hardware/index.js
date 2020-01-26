@@ -23,7 +23,7 @@ function turnCoolingIfNeeded(r1, r2, r3, r4) {
         const max = Math.max(...temperatures);
         const min = Math.min(...temperatures);
         const t = (temperatures.reduce((sum, x) => sum + x) - min - max) / 2.0;
-
+        console.log("Average Temperature is " + t + "°");
         if (t > s.tHigh) {
             hw.turnCoolingOn();
         }
@@ -56,7 +56,7 @@ function turnFanIfNeeded(r1, r2, r3, r4) {
         const max = Math.max(...humidities);
         const min = Math.min(...humidities);
         const p = (humidities.reduce((sum, x) => sum + x) - min - max) / 2.0;
-
+        console.log("Average Humidity is " + p + "%");
         if (p > s.hHigh) {
             hw.turnFanOff();
         }

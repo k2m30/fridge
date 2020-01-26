@@ -54,9 +54,9 @@ git push && ssh pi@fridge.local 'cd fridge && git pull'
 |   |   | |25 | 26 | |  | 
 |   |   | |27 | 28 | |  | 
 |   |   | |29 | 30 | |  | 
-| Yellow  | SDA5 (Sensor 2)  | 6 |31 | 32 |12 | Relay 2 (Fan) | Green 
+| Yellow  | SDA5 (Sensor 2)  | 6 |31 | 32 |12 | Relay 2 (Fan, GPIO 26) | Green 
 | White  | SCL5 (Sensor 2)  |13 |33 | 34 | | GND | 
-| Yellow  | SDA3 (Sensor 3)  | 19|35 | 36 |16 | Relay 3 (Fridge) | Yellow
+| Yellow  | SDA3 (Sensor 3)  | 19|35 | 36 |16 | Relay 3 (Fridge, GPIO 27) | Yellow
 | White  | SCL3 (sensor 3)  | 26|37 | 38 | | SDA4 (Sensor 1) | Yellow
 |   | GND  | |39 | 40 | | SCL4 (Sensor 1) | White
 

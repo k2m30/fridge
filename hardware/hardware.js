@@ -1,6 +1,8 @@
 os = require('os');
-const FRIDGE_PIN = 27;
-const FAN_PIN = 26;
+
+//physical pins
+const FAN_PIN = 32;
+const FRIDGE_PIN = 36;
 
 
 function getBME280() {

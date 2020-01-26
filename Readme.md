@@ -55,3 +55,18 @@ git push && ssh pi@fridge.local 'cd fridge && git pull'
 | Yellow  | SDA3 (Sensor 3)  | 19|35 | 36 | | Relay 3 (Fridge) | Yellow
 | White  | SCL3 (sensor 3)  | 26|37 | 38 | | SDA4 (Sensor 1) | Yellow
 |   | GND  | |39 | 40 | | SCL4 (Sensor 1) | White
+
+## Config
+
+At /boot/config.txt
+
+```
+dtparam=i2c_arm=on
+dtoverlay=i2c-gpio,bus=5,i2c_gpio_delay_us=1,i2c_gpio_sda=6,i2c_gpio_scl=13
+dtoverlay=i2c-gpio,bus=4,i2c_gpio_delay_us=1,i2c_gpio_sda=20,i2c_gpio_scl=21
+dtoverlay=i2c-gpio,bus=3,i2c_gpio_delay_us=1,i2c_gpio_sda=19,i2c_gpio_scl=26
+
+gpio=2,26,27=op
+gpio=1=ip
+```
+

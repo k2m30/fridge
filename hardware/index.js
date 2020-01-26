@@ -11,12 +11,11 @@ const Reading = db.Reading;
 const Settings = db.Setting;
 
 const BME280 = hw.BME280;
-const bme280_2 = new BME280({bus: 3});
-// const bme280_1 = new BME280({bus: 1});
-const bme280_1 = bme280_2;
-const bme280_3 = new BME280({bus: 4});
-// const bme280_4 = new BME280({bus: 5});
-const bme280_4 = bme280_3;
+const bme280_1 = new BME280({bus: 4});
+const bme280_2 = new BME280({bus: 5});
+const bme280_3 = new BME280({bus: 3});
+const bme280_4 = new BME280({bus: 1});
+
 
 function turnCoolingIfNeeded(r1, r2, r3, r4) {
     Settings.findAll().then(settings => settings[0]).then(s => {

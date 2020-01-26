@@ -76,7 +76,7 @@ class Sensors extends Component {
                     }
 
                 }
-                // console.log(datasets_temperature);
+                console.log(datasets_temperature);
                 this.setState({
                     data_temperature:
                         {

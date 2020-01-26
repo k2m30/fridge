@@ -80,6 +80,11 @@ function loop() {
     Reading.create(r3);
     Reading.create(r4);
 
+    console.log(r1);
+    console.log(r2);
+    console.log(r3);
+    console.log(r4);
+
     turnCoolingIfNeeded(r1, r2, r3, r4);
     turnSonicIfNeeded(r1, r2, r3, r4);
     turnFanIfNeeded(r1, r2, r3, r4);

@@ -32,7 +32,7 @@ in other terminal
 
 ## Deploy
 ```
-git push && ssh pi@fridge.local 'cd fridge && git pull'
+./deploy.sh
 ```
 
 ## Pinout

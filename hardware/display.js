@@ -41,7 +41,7 @@ module.exports = class Display {
             this.rpio = require('rpio');
             this.rpio.spiBegin();
             this.rpio.spiChipSelect(0);                  /* Use CE0 */
-            this.rpio.spiSetCSPolarity(0, this.rpio.HIGH);    /* AT93C46 chip select is active-high */
+            this.rpio.spiSetCSPolarity(0, this.rpio.LOW);    /* AT93C46 chip select is active-high */
             this.rpio.spiSetClockDivider(128);           /* AT93C46 max is 2MHz, 128 == 1.95MHz */
             this.rpio.spiSetDataMode(0);
             this.init();

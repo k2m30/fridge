@@ -67,6 +67,7 @@ module.exports = class Display {
         } else {
             buffer = new Buffer([command]);
         }
+        console.log(buffer);
         this.rpio.spiWrite(buffer, buffer.length);
         this.rpio.write(this.cs_pin, 1);
     };
@@ -80,6 +81,7 @@ module.exports = class Display {
         } else {
             buffer = new Buffer([data]);
         }
+        console.log(buffer);
         this.rpio.spiWrite(buffer, buffer.length);
         this.rpio.write(this.cs_pin, 1);
     };

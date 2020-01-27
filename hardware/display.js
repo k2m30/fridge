@@ -84,32 +84,31 @@ module.exports = class Display {
     };
 
     update() {
-        return new Promise(resolve => {
-            let hasBlack = false;
-            let hasRed = false;
+        console.log("update end");
+        let hasBlack = false;
+        let hasRed = false;
 
-            for (let y = 0; y < this.height; y++) {
-                for (let x = 0; x < this.width; x++) {
-                    let color = this.image.height === this.height
-                        ? this.image.getPixel(x, y)
-                        : this.image.getPixel(this.image.width - y, x);
-                    if (color < 64) { //white
-                        this.bufBlack[x + y * this.width] = 0x00;
-                        this.bufRed[x + y * this.width] = 0x00;
-                    } else if (color < 192) { //black
-                        hasBlack = true;
-                        this.bufBlack[x + y * this.width] = 0xff;
-                        this.bufRed[x + y * this.width] = 0x00;
-                    } else { // red
-                        hasRed = true;
-                        this.bufBlack[x + y * this.width] = 0x00;
-                        this.bufRed[x + y * this.width] = 0xff;
-                    }
+        for (let y = 0; y < this.height; y++) {
+            for (let x = 0; x < this.width; x++) {
+                let color = this.image.height === this.height
+                    ? this.image.getPixel(x, y)
+                    : this.image.getPixel(this.image.width - y, x);
+                if (color < 64) { //white
+                    this.bufBlack[x + y * this.width] = 0x00;
+                    this.bufRed[x + y * this.width] = 0x00;
+                } else if (color < 192) { //black
+                    hasBlack = true;
+                    this.bufBlack[x + y * this.width] = 0xff;
+                    this.bufRed[x + y * this.width] = 0x00;
+                } else { // red
+                    hasRed = true;
+                    this.bufBlack[x + y * this.width] = 0x00;
+                    this.bufRed[x + y * this.width] = 0xff;
                 }
             }
-            this.show();
-            resolve();
-        })
+        }
+        this.show();
+        console.log("update end");
     }
 
     wait() {
@@ -121,6 +120,7 @@ module.exports = class Display {
     }
 
     show() {
+        console.log("show start");
         this.send_command(0x10);
         for (let i = 0; i < this.width / 8 * this.height; i++) {
             // for i in range(0, int(this.width / 8 * this.height)){
@@ -157,12 +157,14 @@ module.exports = class Display {
                 this.send_data(temp3);
                 j += 1;
             }
+
         }
         this.send_command(0x04); // # POWER ON
         this.wait();
         this.send_command(0x12); // # display refresh
         this.rpio.msleep(100);
         this.wait();
+        console.log("show end");
 
     }
 
@@ -210,6 +212,7 @@ module.exports = class Display {
     }
 
     clear() {
+        console.log("clear start");
         this.send_command(0x10);
         for (let i; i < this.width / 8 * this.height; i++) {
             // for i in range(0, int(this.width / 8 * this.height)):
@@ -223,6 +226,7 @@ module.exports = class Display {
         this.send_command(0x12);// # display refresh
         this.rpio.msleep(100);
         this.wait();
+        console.log("clear end");
     }
 
     stand_by() {

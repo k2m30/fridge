@@ -84,7 +84,7 @@ module.exports = class Display {
     };
 
     update() {
-        console.log("update end");
+        console.log("update start");
         let hasBlack = false;
         let hasRed = false;
 
@@ -121,9 +121,12 @@ module.exports = class Display {
 
     show() {
         console.log("show start");
+        console.log(this.bufBlack);
+        console.log(this.bufRed);
         this.send_command(0x10);
         for (let i = 0; i < this.width / 8 * this.height; i++) {
             // for i in range(0, int(this.width / 8 * this.height)){
+            console.log(i);
             let temp1 = this.bufBlack[i];
             let temp2 = this.bufRed[i];
             let j = 0;

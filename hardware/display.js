@@ -48,7 +48,7 @@ module.exports = class Display {
 
             this.rpio.spiBegin();
             this.rpio.spiChipSelect(0);                  /* Use CE0 */
-            this.rpio.spiSetClockDivider(128);           /* AT93C46 max is 2MHz, 128 == 1.95MHz */
+            this.rpio.spiSetClockDivider(64);           /* AT93C46 max is 2MHz, 128 == 1.95MHz */
             this.rpio.spiSetDataMode(0);
 
             this.init();
@@ -76,7 +76,6 @@ module.exports = class Display {
         } else {
             buffer = new Buffer([command]);
         }
-        console.log(buffer);
         this.rpio.spiWrite(buffer, buffer.length);
         this.rpio.write(this.cs_pin, 1);
     };
@@ -90,7 +89,6 @@ module.exports = class Display {
         } else {
             buffer = new Buffer([data]);
         }
-        console.log(buffer);
         this.rpio.spiWrite(buffer, buffer.length);
         this.rpio.write(this.cs_pin, 1);
     };

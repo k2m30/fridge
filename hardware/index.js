@@ -25,6 +25,21 @@ let state = {
     fanOn: false
 };
 
+function test() {
+    const Display = require('./display.js')
+    const display = new Display();
+    let state = {
+        t: 0,
+        h: 0,
+        coolingOn: false,
+        fanOn: false
+    };
+
+    display.image.stringFT(display.colors.red, './Roboto-Regular.ttf', 12, 0, 10, 60, "t = " + state.t + "° " + "h = " + state.h + "%");
+    display.image.stringFT(display.colors.yellow, './Roboto-Regular.ttf', 12, 0, 10, 120, "t = " + state.t + "° " + "h = " + state.h + "%");
+    display.image.savePng('output.png', 1);
+
+}
 
 function turnCoolingIfNeeded(r1, r2, r3, r4) {
     Settings.findAll().then(settings => settings[0]).then(s => {
@@ -106,7 +121,8 @@ function loop() {
 }
 
 function displayLoop() {
-    display.image.stringFTBBox(128, '/home/pi/fridge/hardware/Roboto-Regular.ttf', 12, 0, 0, 0, "t = " + state.t + "° " + "h = " + state.h + "%");
+    display.image.stringFTBBox(128, './Roboto-Regular.ttf', 12, 0, 0, 0, "t = " + state.t + "° " + "h = " + state.h + "%");
+    // display.image.stringFTBBox(128, '/home/pi/fridge/hardware/Roboto-Regular.ttf', 12, 0, 0, 0, "t = " + state.t + "° " + "h = " + state.h + "%");
     display.update();
 }
 

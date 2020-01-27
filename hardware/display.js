@@ -28,7 +28,12 @@ module.exports = class Display {
         this.bufRed = new Buffer.alloc(this.width * this.height, 0);
 
         this.image = gd.createSync(this.width, this.height);
-
+        this.colors = {
+            white: this.image.colorAllocate(255, 255, 255),
+            black: this.image.colorAllocate(0, 0, 0),
+            red: this.image.colorAllocate(255, 0, 0),
+            yellow: this.image.colorAllocate(204,204,0)
+        };
         if (os.arch() === 'arm') {
             this.rpio = require('rpio');
             this.rpio.spiBegin();
@@ -36,7 +41,7 @@ module.exports = class Display {
             this.clear();
             return this.update();
         } else {
-            console.warn("Not using I2C", os.arch());
+            console.warn("Not using GPIO", os.arch());
         }
     }
 
@@ -217,3 +222,4 @@ module.exports = class Display {
         });
     }
 };
+

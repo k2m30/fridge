@@ -63,9 +63,9 @@ module.exports = class Display {
         this.rpio.write(this.cs_pin, 0);
         let buffer;
         if (Array.isArray(command)) {
-            buffer = new Buffer.alloc(command);
+            buffer = new Buffer(command);
         } else {
-            buffer = new Buffer.alloc([command]);
+            buffer = new Buffer([command]);
         }
         this.rpio.spiWrite(buffer, buffer.length);
         this.rpio.write(this.cs_pin, 1);
@@ -76,9 +76,9 @@ module.exports = class Display {
         this.rpio.write(this.cs_pin, 0);
         let buffer;
         if (Array.isArray(data)) {
-            buffer = new Buffer.alloc(data);
+            buffer = new Buffer(data);
         } else {
-            buffer = new Buffer.alloc([data]);
+            buffer = new Buffer([data]);
         }
         this.rpio.spiWrite(buffer, buffer.length);
         this.rpio.write(this.cs_pin, 1);

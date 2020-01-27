@@ -3,9 +3,11 @@ const db = require('./db');
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const Display = require('./display.js');
 
 db.init();
 hw.initGPIO();
+display = new Display();
 
 const Reading = db.Reading;
 const Settings = db.Setting;
@@ -90,6 +92,10 @@ function loop() {
     turnFanIfNeeded(r1, r2, r3, r4);
 }
 
+function displayLoop() {
+
+}
+
 const app = express();
 app.use(cors());
 app.use(express.json()); // for parsing application/json
@@ -117,6 +123,6 @@ app.post('/thresholds', (req, res, next) => {
 
 app.listen(3000, () => console.log(`Fridge app listening on port 3000!`));
 
-
 setInterval(loop, 60000);
+setInterval(displayLoop, 60000);
 loop();

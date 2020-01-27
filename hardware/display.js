@@ -1,4 +1,6 @@
 'use strict';
+const os = require('os');
+const gd = require('node-gd');
 
 module.exports = class Display {
 
@@ -14,6 +16,10 @@ module.exports = class Display {
     busy_pin = 24;
     cs_pin = 8;
 
+    // white: 0,
+    // black: 128,
+    // red: 255
+
     constructor(height, width) {
         this.width = width || this.EPD_WIDTH;
         this.height = height || this.EPD_HEIGHT;
@@ -21,15 +27,17 @@ module.exports = class Display {
         this.bufBlack = new Buffer.alloc(this.width * this.height, 0);
         this.bufRed = new Buffer.alloc(this.width * this.height, 0);
 
-        this.gd = require('node-gd');
-        this.rpio = require('rpio');
-        this.image = this.gd.createSync(this.width, this.height);
+        this.image = gd.createSync(this.width, this.height);
 
-        this.rpio.spiBegin();
-        this.init();
-        this.clear();
-
-        return this.update();
+        if (os.arch() === 'arm') {
+            this.rpio = require('rpio');
+            this.rpio.spiBegin();
+            this.init();
+            this.clear();
+            return this.update();
+        } else {
+            console.warn("Not using I2C", os.arch());
+        }
     }
 
     reset() {

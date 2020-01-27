@@ -18,6 +18,13 @@ const bme280_2 = new BME280({bus: 5});
 const bme280_3 = new BME280({bus: 3});
 const bme280_4 = new BME280({bus: 1});
 
+let state = {
+    t: 0,
+    h: 0,
+    coolingOn: false,
+    fanOn: false
+};
+
 
 function turnCoolingIfNeeded(r1, r2, r3, r4) {
     Settings.findAll().then(settings => settings[0]).then(s => {
@@ -26,12 +33,15 @@ function turnCoolingIfNeeded(r1, r2, r3, r4) {
         const min = Math.min(...temperatures);
         const t = (temperatures.reduce((sum, x) => sum + x) - min - max) / 2.0;
         console.log("Average Temperature is " + t + "°");
+        state.t = t;
         if (t > s.tHigh) {
             hw.turnCoolingOn();
+            state.coolingOn = true;
         }
 
         if (t < s.tLow) {
             hw.turnCoolingOff();
+            state.coolingOn = false;
         }
 
     });
@@ -57,14 +67,17 @@ function turnFanIfNeeded(r1, r2, r3, r4) {
         const humidities = [r1.humidity, r2.humidity, r3.humidity, r4.humidity];
         const max = Math.max(...humidities);
         const min = Math.min(...humidities);
-        const p = (humidities.reduce((sum, x) => sum + x) - min - max) / 2.0;
-        console.log("Average Humidity is " + p + "%");
-        if (p > s.hHigh) {
+        const h = (humidities.reduce((sum, x) => sum + x) - min - max) / 2.0;
+        console.log("Average Humidity is " + h + "%");
+        state.h = h;
+        if (h > s.hHigh) {
             hw.turnFanOff();
+            state.fanOn = false;
         }
 
-        if (p < s.hLow) {
+        if (h < s.hLow) {
             hw.turnFanOn();
+            state.fanOn = true;
         }
 
     });
@@ -93,7 +106,8 @@ function loop() {
 }
 
 function displayLoop() {
-
+    display.image.stringFTBBox(128, '/home/pi/fridge/hardware/Roboto-Regular.ttf', 12, 0, 0, 0, "t = " + state.t + "° " + "h = " + state.h + "%");
+    display.update();
 }
 
 const app = express();

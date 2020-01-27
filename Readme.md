@@ -72,5 +72,7 @@ dtoverlay=i2c-gpio,bus=3,i2c_gpio_delay_us=1,i2c_gpio_sda=19,i2c_gpio_scl=26
 
 gpio=12,16,27=op
 gpio=18=ip
+
+dtoverlay=gpio-no-irq
 ```
 

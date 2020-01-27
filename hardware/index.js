@@ -26,7 +26,7 @@ let state = {
 };
 
 function test() {
-    const Display = require('./display.js')
+    const Display = require('./display.js');
     const display = new Display();
     let state = {
         t: 0,

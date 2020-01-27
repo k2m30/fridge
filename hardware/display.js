@@ -11,14 +11,17 @@ module.exports = class Display {
     EPD_WIDTH = 640;
     EPD_HEIGHT = 384;
 
-    reset_pin = 17;
-    dc_pin = 25;
-    busy_pin = 24;
-    cs_pin = 8;
+    //BCM
+    // reset_pin = 17;
+    // dc_pin = 25;
+    // busy_pin = 24;
+    // cs_pin = 8;
 
-    // white: 0,
-    // black: 128,
-    // red: 255
+    //physical
+    reset_pin = 11;
+    dc_pin = 22;
+    busy_pin = 18;
+    cs_pin = 24;
 
     constructor(height, width) {
         this.width = width || this.EPD_WIDTH;

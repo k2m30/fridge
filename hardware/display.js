@@ -35,7 +35,7 @@ module.exports = class Display {
             white: this.image.colorAllocate(255, 255, 255),
             black: this.image.colorAllocate(0, 0, 0),
             red: this.image.colorAllocate(255, 0, 0),
-            yellow: this.image.colorAllocate(204,204,0)
+            yellow: this.image.colorAllocate(204, 204, 0)
         };
         if (os.arch() === 'arm') {
             this.rpio = require('rpio');
@@ -60,14 +60,26 @@ module.exports = class Display {
     send_command(command) {
         this.rpio.write(this.dc_pin, 0);
         this.rpio.write(this.cs_pin, 0);
-        this.rpio.spiWrite(command, command.length);
+        let buffer;
+        if (Array.isArray(command)) {
+            buffer = new Buffer(command);
+        } else {
+            new Buffer([command]);
+        }
+        this.rpio.spiWrite(buffer, buffer.length);
         this.rpio.write(this.cs_pin, 1);
     };
 
     send_data(data) {
         this.rpio.write(this.dc_pin, 1);
         this.rpio.write(this.cs_pin, 0);
-        this.rpio.spiWrite(data, data.length);
+        let buffer;
+        if (Array.isArray(data)) {
+            buffer = new Buffer(data);
+        } else {
+            new Buffer([data]);
+        }
+        this.rpio.spiWrite(buffer, buffer.length);
         this.rpio.write(this.cs_pin, 1);
     };
 

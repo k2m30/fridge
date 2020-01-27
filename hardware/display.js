@@ -40,6 +40,7 @@ module.exports = class Display {
         if (os.arch() === 'arm') {
             this.rpio = require('rpio');
             this.rpio.spiBegin();
+            this.rpio.spiSetClockDivider(1280);
             this.init();
             this.clear();
             return this.update();
@@ -62,9 +63,9 @@ module.exports = class Display {
         this.rpio.write(this.cs_pin, 0);
         let buffer;
         if (Array.isArray(command)) {
-            buffer = new Buffer(command);
+            buffer = new Buffer.alloc(command);
         } else {
-            buffer = new Buffer([command]);
+            buffer = new Buffer.alloc([command]);
         }
         this.rpio.spiWrite(buffer, buffer.length);
         this.rpio.write(this.cs_pin, 1);
@@ -75,9 +76,9 @@ module.exports = class Display {
         this.rpio.write(this.cs_pin, 0);
         let buffer;
         if (Array.isArray(data)) {
-            buffer = new Buffer(data);
+            buffer = new Buffer.alloc(data);
         } else {
-            buffer = new Buffer([data]);
+            buffer = new Buffer.alloc([data]);
         }
         this.rpio.spiWrite(buffer, buffer.length);
         this.rpio.write(this.cs_pin, 1);
@@ -217,7 +218,7 @@ module.exports = class Display {
     clear() {
         console.log("clear start");
         this.send_command(0x10);
-        for (let i; i < this.width / 8 * this.height; i++) {
+        for (let i = 0; i < this.width / 8 * this.height; i++) {
             // for i in range(0, int(this.width / 8 * this.height)):
             this.send_data(0x33);
             this.send_data(0x33);

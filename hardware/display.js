@@ -39,11 +39,18 @@ module.exports = class Display {
         };
         if (os.arch() === 'arm') {
             this.rpio = require('rpio');
+            this.rpio.init({mapping: 'physical', gpiomem: false});
+
+            this.rpio.open(this.reset_pin, this.rpio.OUTPUT, this.rpio.LOW);
+            this.rpio.open(this.dc_pin, this.rpio.OUTPUT, this.rpio.LOW);
+            this.rpio.open(this.cs_pin, this.rpio.OUTPUT, this.rpio.LOW);
+            this.rpio.open(this.busy_pin, this.rpio.INPUT);
+
             this.rpio.spiBegin();
             this.rpio.spiChipSelect(0);                  /* Use CE0 */
-            this.rpio.spiSetCSPolarity(0, this.rpio.LOW);    /* AT93C46 chip select is active-high */
             this.rpio.spiSetClockDivider(128);           /* AT93C46 max is 2MHz, 128 == 1.95MHz */
             this.rpio.spiSetDataMode(0);
+
             this.init();
             this.clear();
         } else {

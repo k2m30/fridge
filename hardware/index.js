@@ -38,8 +38,64 @@ function test() {
     display.image.stringFT(display.colors.red, './Roboto-Regular.ttf', 12, 0, 10, 60, "t = " + state.t + "° " + "h = " + state.h + "%");
     display.image.stringFT(display.colors.yellow, './Roboto-Regular.ttf', 12, 0, 10, 120, "t = " + state.t + "° " + "h = " + state.h + "%");
     display.image.savePng('output.png', 1);
+    //BCM
+    reset_pin = 17;
+    dc_pin = 25;
+    busy_pin = 24;
+    cs_pin = 8;
+
+    //physical
+    reset_pin = 11;
+    dc_pin = 22;
+    busy_pin = 18;
+    cs_pin = 24;
+
+
+    rpio = require('rpio');
+    rpio.init({mapping: 'physical', gpiomem: false});
+    rpio.open(reset_pin, rpio.OUTPUT, rpio.LOW);
+    rpio.open(dc_pin, rpio.OUTPUT, rpio.LOW);
+    rpio.open(cs_pin, rpio.OUTPUT, rpio.LOW);
+    rpio.open(busy_pin, rpio.INPUT);
+    rpio.spiBegin();
+    rpio.spiChipSelect(0);                  /* Use CE0 */
+    rpio.spiSetClockDivider(128);           /* AT93C46 max is 2MHz, 128 == 1.95MHz */
+    rpio.spiSetDataMode(0);
+
+
+
+    width = 640;
+    height = 384;
+    send_command(0x10);
+    for (let i = 0; i < width / 8 * height; i++) {
+        // for i in range(0, int(this.width / 8 * this.height)):
+        send_data(0x33);
+        send_data(0x33);
+        send_data(0x33);
+        send_data(0x33);
+    }
+    send_command(0x04);// # POWER ON
+    send_command(0x12);// # display refresh
+
+
 
 }
+
+function send_command(command) {
+    rpio.write(dc_pin, 0);
+    let buffer;
+    buffer = new Buffer([command]);
+    console.log(buffer);
+    rpio.spiWrite(buffer, buffer.length);
+};
+
+function send_data(command) {
+    rpio.write(dc_pin, 1);
+    let buffer;
+    buffer = new Buffer([command]);
+    console.log(buffer);
+    rpio.spiWrite(buffer, buffer.length);
+};
 
 function turnCoolingIfNeeded(r1, r2, r3, r4) {
     Settings.findAll().then(settings => settings[0]).then(s => {

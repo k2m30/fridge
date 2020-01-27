@@ -43,7 +43,6 @@ module.exports = class Display {
             this.rpio.spiSetClockDivider(1280);
             this.init();
             this.clear();
-            return this.update();
         } else {
             console.warn("Not using GPIO", os.arch());
         }

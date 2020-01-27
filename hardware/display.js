@@ -157,12 +157,13 @@ module.exports = class Display {
                 this.send_data(temp3);
                 j += 1;
             }
-            this.send_command(0x04); // # POWER ON
-            this.wait();
-            this.send_command(0x12); // # display refresh
-            this.rpio.msleep(100);
-            this.wait();
         }
+        this.send_command(0x04); // # POWER ON
+        this.wait();
+        this.send_command(0x12); // # display refresh
+        this.rpio.msleep(100);
+        this.wait();
+
     }
 
     init() {

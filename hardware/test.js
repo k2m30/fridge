@@ -41,6 +41,11 @@ display.wait();
 display.send_command(0x02);
 display.wait();
 
+for (let i = 0; i < 5; i++) {
+    display.image.filledRectangle(display.width / 5 * i, 0, display.width / 5 * (i + 1), display.height, i);
+}
+
+
 display.image.stringFT(display.colors.red0, './Roboto-Regular.ttf', 22, 0, 10, 10, "t = " + state.t + "° " + "h = " + state.h + "%");
 display.image.stringFT(display.colors.red1, './Roboto-Regular.ttf', 22, 0, 10, 60, "t = " + state.t + "° " + "h = " + state.h + "%");
 display.image.stringFT(display.colors.red2, './Roboto-Regular.ttf', 22, 0, 10, 110, "t = " + state.t + "° " + "h = " + state.h + "%");
@@ -73,9 +78,6 @@ display.wait();
 display.send_command(0x02); // # POWER OFF
 display.wait();
 console.log("update end");
-
-
-
 
 
 d();

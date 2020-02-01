@@ -189,7 +189,7 @@ module.exports = class Display {
         this.send_data(0x3A); // # PLL:  0-15:0x3C, 15+:0x3A
 
         this.send_command(0x82); // # VCM_DC_SETTING
-        this.send_data(0x28); // #all temperature  range
+        this.send_data(0x14); // #all temperature  range
 
         this.send_command(0x06); // # BOOSTER_SOFT_START
         this.send_data(0xc7);

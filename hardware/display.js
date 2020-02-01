@@ -54,9 +54,6 @@ function getBuffer(data) {
 module.exports = class Display {
 
     image;
-    bufBlack;
-    bufRed;
-
     EPD_WIDTH = 640;
     EPD_HEIGHT = 380;
 
@@ -78,18 +75,13 @@ module.exports = class Display {
 
         this.image = gd.createSync(this.width, this.height);
 
-        for (let i = 0; i < 8; i++) this.image.colorAllocate(255 - i * 32, 255 - i * 32, 255 - i * 32);
+        for (let i = 0; i < 2; i++) this.image.colorAllocate(255 - i * 85, 255 - i * 85, 255 - i * 85);
 
         this.colors = {
             black: 0,
-            grey1: 1,
-            grey2: 2,
             white: 3,
             red0: 4,
             yellow: 4,
-            red1: 5,
-            red2: 6,
-            red3: 7
         };
         this.rpio = require('rpio');
         if (os.arch() === 'arm') {

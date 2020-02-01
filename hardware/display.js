@@ -147,7 +147,7 @@ module.exports = class Display {
                 color1 = this.image.getPixel(x, y);
                 color2 = this.image.getPixel(x + 1, y);
                 byte = color1 << 4 | color2;
-                console.log(byte.toString(2));
+                // console.log(byte.toString(2));
                 this.send_data(byte);
             }
         }

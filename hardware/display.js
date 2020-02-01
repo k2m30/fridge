@@ -75,7 +75,8 @@ module.exports = class Display {
 
         this.image = gd.createSync(this.width, this.height);
 
-        for (let i = 0; i < 2; i++) this.image.colorAllocate(255 - i * 85, 255 - i * 85, 255 - i * 85);
+        // for (let i = 0; i < 2; i++) this.image.colorAllocate(255 - i * 85, 255 - i * 85, 255 - i * 85);
+        for (let i = 0; i < 255; i++) this.image.colorAllocate(255 - i , 255 - i , 255 );
 
         this.colors = {
             black: 0,

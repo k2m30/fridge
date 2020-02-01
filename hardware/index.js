@@ -7,8 +7,6 @@ const Display = require('./display.js');
 const os = require('os');
 
 db.init();
-hw.initGPIO();
-
 
 //physical pins
 const FAN_PIN = 32;

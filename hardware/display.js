@@ -132,7 +132,7 @@ module.exports = class Display {
         this.rpio.write(this.dc_pin, 1);
         this.rpio.write(this.cs_pin, 0);
         let buffer = getBuffer(data);
-        console.log(data);
+        // console.log(data);
         this.rpio.spiWrite(buffer, buffer.length);
         this.rpio.write(this.cs_pin, 1);
     };

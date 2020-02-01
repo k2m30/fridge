@@ -69,28 +69,26 @@ module.exports = class Display {
     busy_pin = 18;
     cs_pin = 24;
 
-    constructor(height, width) {
+    constructor(rpio, height, width) {
         this.width = width || this.EPD_WIDTH;
         this.height = height || this.EPD_HEIGHT;
 
         this.image = gd.createSync(this.width, this.height);
 
         // for (let i = 0; i < 2; i++) this.image.colorAllocate(255 - i * 85, 255 - i * 85, 255 - i * 85);
-        for (let i = 0; i < 255; i++) this.image.colorAllocate(255 - i , 255 - i , 255 );
+        // for (let i = 0; i < 256; i++) this.image.colorAllocate(255 - i , 255 - i , 255 );
 
         this.colors = {
             black: 0,
             white: 3,
-            red0: 4,
+            red: 4,
             yellow: 4,
         };
-        this.rpio = require('rpio');
-        if (os.arch() === 'arm') {
-            this.rpio.init({mapping: 'physical', gpiomem: false});
-        } else {
-            this.rpio.init({mapping: 'physical', gpiomem: false, mock: 'raspi-3'});
-            console.warn("Not using GPIO", os.arch());
-        }
+        this.rpio = rpio;
+
+        // for (let i = 0; i < 256; i++) this.image.colorAllocate(255 - i , 255 - i , 255 );
+        for (let i = 0; i < 2; i++) this.image.colorAllocate(255 - i * 85, 255 - i * 85, 255 - i * 85);
+
         this.rpio.open(this.reset_pin, this.rpio.OUTPUT, this.rpio.LOW);
         this.rpio.open(this.dc_pin, this.rpio.OUTPUT, this.rpio.LOW);
         this.rpio.open(this.cs_pin, this.rpio.OUTPUT, this.rpio.LOW);

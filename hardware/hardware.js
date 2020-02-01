@@ -59,6 +59,6 @@ module.exports = {
             console.warn('Cooling off');
         });
     },
-    BME280: getBME280(),
+    Sensor: getBME280(),
 
 };

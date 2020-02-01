@@ -8,7 +8,8 @@ module.exports = {
     init: function () {
         const sequelize = new SQLite3({
             dialect: 'sqlite',
-            storage: '../database.sqlite'
+            storage: '../database.sqlite',
+            logging: false
         });
 
         sequelize

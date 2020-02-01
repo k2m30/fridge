@@ -4,19 +4,37 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const Display = require('./display.js');
+const os = require('os');
 
 db.init();
 hw.initGPIO();
-display = new Display();
 
-const Reading = db.Reading;
+
+//physical pins
+const FAN_PIN = 32;
+const FRIDGE_PIN = 36;
+
+const rpio = require('rpio');
+if (os.arch() === 'arm') {
+    rpio.init({mapping: 'physical', gpiomem: false});
+} else {
+    rpio.init({mapping: 'physical', gpiomem: false, mock: 'raspi-3'});
+    console.warn("Not using GPIO", os.arch());
+}
+rpio.open(FRIDGE_PIN, rpio.OUTPUT);
+rpio.open(FAN_PIN, rpio.OUTPUT);
+
+
+const display = new Display(rpio);
+
+const Readings = db.Reading;
 const Settings = db.Setting;
 
-const BME280 = hw.BME280;
-const bme280_1 = new BME280({bus: 4});
-const bme280_2 = new BME280({bus: 5});
-const bme280_3 = new BME280({bus: 3});
-const bme280_4 = new BME280({bus: 1});
+const Sensor = hw.Sensor;
+const sensor_1 = new Sensor({bus: 4});
+const sensor_2 = new Sensor({bus: 5});
+const sensor_3 = new Sensor({bus: 3});
+const sensor_4 = new Sensor({bus: 1});
 
 let state = {
     t: 0,
@@ -25,93 +43,15 @@ let state = {
     fanOn: false
 };
 
-function test() {
-    const Display = require('./display.js');
-    const display = new Display();
-    let state = {
-        t: 0,
-        h: 0,
-        coolingOn: false,
-        fanOn: false
-    };
-
-    display.image.stringFT(display.colors.red, './Roboto-Regular.ttf', 12, 0, 10, 60, "t = " + state.t + "° " + "h = " + state.h + "%");
-    display.image.stringFT(display.colors.yellow, './Roboto-Regular.ttf', 12, 0, 10, 120, "t = " + state.t + "° " + "h = " + state.h + "%");
-    display.image.savePng('output.png', 1);
-    //BCM
-    reset_pin = 17;
-    dc_pin = 25;
-    busy_pin = 24;
-    cs_pin = 8;
-
-    //physical
-    reset_pin = 11;
-    dc_pin = 22;
-    busy_pin = 18;
-    cs_pin = 24;
-
-
-    rpio = require('rpio');
-    rpio.init({mapping: 'physical', gpiomem: false});
-    rpio.open(reset_pin, rpio.OUTPUT, rpio.LOW);
-    rpio.open(dc_pin, rpio.OUTPUT, rpio.LOW);
-    rpio.open(cs_pin, rpio.OUTPUT, rpio.LOW);
-    rpio.open(busy_pin, rpio.INPUT);
-    rpio.spiBegin();
-    rpio.spiChipSelect(0);                  /* Use CE0 */
-    rpio.spiSetClockDivider(128);           /* AT93C46 max is 2MHz, 128 == 1.95MHz */
-    rpio.spiSetDataMode(0);
-
-
-
-    width = 640;
-    height = 384;
-    send_command(0x10);
-    for (let i = 0; i < width / 8 * height; i++) {
-        // for i in range(0, int(this.width / 8 * this.height)):
-        send_data(0x33);
-        send_data(0x33);
-        send_data(0x33);
-        send_data(0x33);
-    }
-    send_command(0x04);// # POWER ON
-    send_command(0x12);// # display refresh
-
-
-
-}
-
-function send_command(command) {
-    rpio.write(dc_pin, 0);
-    let buffer;
-    buffer = new Buffer([command]);
-    console.log(buffer);
-    rpio.spiWrite(buffer, buffer.length);
-};
-
-function send_data(command) {
-    rpio.write(dc_pin, 1);
-    let buffer;
-    buffer = new Buffer([command]);
-    console.log(buffer);
-    rpio.spiWrite(buffer, buffer.length);
-};
-
-function turnCoolingIfNeeded(r1, r2, r3, r4) {
+function turnCoolingIfNeeded() {
     Settings.findAll().then(settings => settings[0]).then(s => {
-        const temperatures = [r1.temperature, r2.temperature, r3.temperature, r4.temperature];
-        const max = Math.max(...temperatures);
-        const min = Math.min(...temperatures);
-        const t = (temperatures.reduce((sum, x) => sum + x) - min - max) / 2.0;
-        console.log("Average Temperature is " + t + "°");
-        state.t = t;
-        if (t > s.tHigh) {
-            hw.turnCoolingOn();
+        if (state.t > s.tHigh) {
+            rpio.write(FRIDGE_PIN, rpio.LOW);
             state.coolingOn = true;
         }
 
-        if (t < s.tLow) {
-            hw.turnCoolingOff();
+        if (state.t < s.tLow) {
+            rpio.write(FRIDGE_PIN, rpio.HIGH);
             state.coolingOn = false;
         }
 
@@ -129,58 +69,66 @@ function readBME280(device) {
 }
 
 
-function turnSonicIfNeeded(r1, r2, r3, r4) {
+function turnSonicIfNeeded() {
 
 }
 
-function turnFanIfNeeded(r1, r2, r3, r4) {
+function turnFanIfNeeded() {
     Settings.findAll().then(settings => settings[0]).then(s => {
-        const humidities = [r1.humidity, r2.humidity, r3.humidity, r4.humidity];
-        const max = Math.max(...humidities);
-        const min = Math.min(...humidities);
-        const h = (humidities.reduce((sum, x) => sum + x) - min - max) / 2.0;
-        console.log("Average Humidity is " + h + "%");
-        state.h = h;
-        if (h > s.hHigh) {
-            hw.turnFanOff();
+        if (state.h > s.hHigh) {
+            rpio.write(FAN_PIN, rpio.LOW);
             state.fanOn = false;
         }
 
-        if (h < s.hLow) {
-            hw.turnFanOn();
+        if (state.h < s.hLow) {
+            rpio.write(FAN_PIN, rpio.HIGH);
             state.fanOn = true;
         }
-
     });
 
 }
 
 function loop() {
-    const r1 = readBME280(bme280_1);
-    const r2 = readBME280(bme280_2);
-    const r3 = readBME280(bme280_3);
-    const r4 = readBME280(bme280_4);
+    Readings.create(readBME280(sensor_1));
+    Readings.create(readBME280(sensor_2));
+    Readings.create(readBME280(sensor_3));
+    Readings.create(readBME280(sensor_4));
 
-    Reading.create(r1);
-    Reading.create(r2);
-    Reading.create(r3);
-    Reading.create(r4);
-
-    console.log(r1);
-    console.log(r2);
-    console.log(r3);
-    console.log(r4);
-
-    turnCoolingIfNeeded(r1, r2, r3, r4);
-    turnSonicIfNeeded(r1, r2, r3, r4);
-    turnFanIfNeeded(r1, r2, r3, r4);
+    turnCoolingIfNeeded();
+    turnSonicIfNeeded();
+    turnFanIfNeeded();
 }
 
 function displayLoop() {
-    display.image.stringFTBBox(128, './Roboto-Regular.ttf', 12, 0, 0, 0, "t = " + state.t + "° " + "h = " + state.h + "%");
-    // display.image.stringFTBBox(128, '/home/pi/fridge/hardware/Roboto-Regular.ttf', 12, 0, 0, 0, "t = " + state.t + "° " + "h = " + state.h + "%");
-    display.update();
 }
+
+function updateState() {
+    Readings.findAll({limit: 50}).done((data, e) => {
+        r1 = data[0];
+        r2 = data[1];
+        r3 = data[2];
+        r4 = data[3];
+
+        const temperatures = [r1.temperature, r2.temperature, r3.temperature, r4.temperature];
+        let max = Math.max(...temperatures);
+        let min = Math.min(...temperatures);
+        state.t = (temperatures.reduce((sum, x) => sum + x) - min - max) / 2.0;
+
+        const humidities = [r1.humidity, r2.humidity, r3.humidity, r4.humidity];
+        max = Math.max(...humidities);
+        min = Math.min(...humidities);
+        state.h = (humidities.reduce((sum, x) => sum + x) - min - max) / 2.0;
+        console.log(state);
+    });
+}
+
+
+function clearDisplay() {
+    display.clear(display.colors.black);
+    display.clear(display.colors.yellow);
+    display.clear();
+}
+
 
 const app = express();
 app.use(cors());
@@ -188,7 +136,7 @@ app.use(express.json()); // for parsing application/json
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.get('/sensors', (req, res) => {
-    Reading.findAll({
+    Readings.findAll({
         limit: 1200, order: [['id', 'DESC']]
     }).then(readings => {
         res.json(readings.reverse());
@@ -211,4 +159,6 @@ app.listen(3000, () => console.log(`Fridge app listening on port 3000!`));
 
 setInterval(loop, 60000);
 setInterval(displayLoop, 60000);
+setInterval(clearDisplay, 60000 * 60 * 24);
+setInterval(updateState, 60000);
 loop();

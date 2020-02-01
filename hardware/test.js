@@ -1,90 +1,74 @@
+const db = require('./db');
+const os = require('os');
+const Readings = db.Reading;
+db.init();
+
+const rpio = require('rpio');
+if (os.arch() === 'arm') {
+    rpio.init({mapping: 'physical', gpiomem: false});
+} else {
+    rpio.init({mapping: 'physical', gpiomem: false, mock: 'raspi-3'});
+    console.warn("Not using GPIO", os.arch());
+}
+
+
 const Display = require('./display.js');
-const display = new Display();
+const display = new Display(rpio);
+
 let state = {
-    t: 0,
-    h: 0,
+    t: 18.2356,
+    h: 54.431,
     coolingOn: false,
     fanOn: false
 };
-// for (let i = 0; i < 7; i++) display.clear(i);
+
+function updateState() {
+    Readings.findAll({limit: 50}).done((data, e) => {
+        r1 = data[0];
+        r2 = data[1];
+        r3 = data[2];
+        r4 = data[3];
+
+        const temperatures = [r1.temperature, r2.temperature, r3.temperature, r4.temperature];
+        let max = Math.max(...temperatures);
+        let min = Math.min(...temperatures);
+        state.t = (temperatures.reduce((sum, x) => sum + x) - min - max) / 2.0;
+
+        const humidities = [r1.humidity, r2.humidity, r3.humidity, r4.humidity];
+        max = Math.max(...humidities);
+        min = Math.min(...humidities);
+        state.h = (humidities.reduce((sum, x) => sum + x) - min - max) / 2.0;
+        console.log(state);
+    });
+}
+
+updateState();
 
 display.clear();
-// font1 = './Kanit-ExtraBold.ttf';
-font1 = './Roboto-Regular.ttf';
+console.log(state);
+font1 = './Kanit-ExtraBold.ttf';
+// font1 = './Roboto-Regular.ttf';
 font2 = './Kanit-Regular.ttf';
 display.image.setAntiAliased(0);
 display.image.filledRectangle(0, 0, display.width, display.height, display.colors.white);
-tx = 420;
-ty = 100;
+tx = 422;
+ty = 110;
 
 display.image.filledRectangle(tx, 0, display.width, display.height, display.colors.yellow);
-display.image.stringFT(display.colors.white, font1, 72, 0, tx + 10, ty, "27.2");
+display.image.stringFT(display.colors.white, font1, 72, 0, tx + 10, ty, state.t.toFixed(1));
 display.image.stringFT(display.colors.white, font2, 28, 0, tx + 175, ty - 45, "°C");
-display.image.stringFT(display.colors.white, font2, 16, 0, tx + 12, ty - 72, "temperature");
+display.image.stringFT(display.colors.white, font2, 20, 0, tx + 12, ty - 72, "temperature");
 
-ty = 200;
-display.image.stringFT(display.colors.white, font1, 72, 0, tx + 10, ty, "34");
-display.image.stringFT(display.colors.white, font2, 28, 0, tx + 115, ty - 45, "%");
-display.image.stringFT(display.colors.white, font2, 19, 0, tx + 12, ty - 72, "humidity");
 
-ty = 300;
-display.image.stringFT(display.colors.black, font1, 72, 0, tx + 10, ty, "34");
-display.image.stringFT(display.colors.black, font2, 28, 0, tx + 115, ty - 45, "%");
-display.image.stringFT(display.colors.black, font2, 18, 0, tx + 12, ty - 72, "humidity");
+ty = 360;
+display.image.stringFT(display.colors.white, font1, 72, 0, tx + 10, ty, state.h.toFixed(0));
+display.image.stringFT(display.colors.white, font2, 28, 0, tx + 119, ty - 45, "%");
+display.image.stringFT(display.colors.white, font2, 20, 0, tx + 12, ty - 72, "humidity");
 
-////////////////////
-tx = 200;
-ty = 100;
-
-display.image.stringFT(display.colors.yellow, font1, 72, 0, tx + 10, ty, "27.2");
-display.image.stringFT(display.colors.yellow, font2, 28, 0, tx + 175, ty - 45, "°C");
-display.image.stringFT(display.colors.yellow, font2, 18, 0, tx + 12, ty - 72, "temperature");
-
-ty = 200;
-display.image.stringFT(display.colors.black, font1, 72, 0, tx + 10, ty, "34");
-display.image.stringFT(display.colors.black, font2, 28, 0, tx + 115, ty - 45, "%");
-display.image.stringFT(display.colors.black, font2, 18, 0, tx + 12, ty - 72, "humidity");
-
-ty = 300;
-display.image.stringFT(display.colors.white, font1, 72, 0, tx + 10, ty, "34");
-display.image.stringFT(display.colors.white, font2, 28, 0, tx + 115, ty - 45, "%");
-display.image.stringFT(display.colors.white, font2, 18, 0, tx + 12, ty - 72, "humidity");
-
-/////////////
-display.image.filledRectangle(0, 0, 200, display.height, display.colors.black);
-tx = 0;
-ty = 60;
-
-display.image.stringFT(display.colors.yellow, font1, 72, 0, tx + 10, ty, "27.2");
-display.image.stringFT(display.colors.yellow, font2, 28, 0, tx + 175, ty - 45, "°C");
-display.image.stringFT(display.colors.yellow, font2, 18, 0, tx + 12, ty - 72, "temperature");
-
-ty = 200;
-display.image.stringFT(display.colors.white, font1, 72, 0, tx + 10, ty, "34");
-display.image.stringFT(display.colors.white, font2, 28, 0, tx + 115, ty - 45, "%");
-display.image.stringFT(display.colors.white, font2, 18, 0, tx + 12, ty - 72, "humidity");
-
-ty = 300;
-display.image.stringFT(display.colors.white, font1, 72, 0, tx + 10, ty, "34");
-display.image.stringFT(display.colors.white, font2, 28, 0, tx + 115, ty - 45, "%");
-display.image.stringFT(display.colors.white, font2, 18, 0, tx + 12, ty - 72, "humidity");
-
+display.image.line(10, 340, 400, 340, display.colors.black);
+display.image.line(10, 341, 400, 341, display.colors.black);
 
 display.update();
 
-let a =[];
-for (let y = 0; y < display.height; y++) {
-    for (let x = 0; x < display.width; x += 2) {
-        color1 = display.image.getPixel(x, y);
-        color2 = display.image.getPixel(x + 1, y);
-        byte = color1 << 4 | color2;
-        a.push(color1);
-        a.push(color2);
-        // console.log(byte.toString(2));
-        // display.send_data(byte);
-    }
-    console.log(a);
-    a = [];
-}
-
 display.image.savePng('output.png', 1);
+console.log(display.image);

@@ -125,7 +125,7 @@ function displayLoop() {
 }
 
 function updateState() {
-    Readings.findAll({limit: 50}).done((data, e) => {
+    Readings.findAll({limit: 50, order: [['id', 'DESC']]}).done((data, e) => {
         r1 = data[0];
         r2 = data[1];
         r3 = data[2];
@@ -186,3 +186,5 @@ setInterval(displayLoop, 60000);
 setInterval(clearDisplay, 60000 * 60 * 24);
 setInterval(updateState, 60000);
 loop();
+updateState();
+displayLoop();

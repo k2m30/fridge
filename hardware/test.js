@@ -41,9 +41,15 @@ display.wait();
 display.send_command(0x02);
 display.wait();
 
-display.image.stringFT(display.colors.red, './Roboto-Regular.ttf', 22, 0, 10, 60, "t = " + state.t + "° " + "h = " + state.h + "%");
-display.image.stringFT(display.colors.yellow, './Roboto-Regular.ttf', 22, 0, 10, 120, "t = " + state.t + "° " + "h = " + state.h + "%");
-// display.image.savePng('output.png', 1);
+display.image.stringFT(display.colors.red0, './Roboto-Regular.ttf', 22, 0, 10, 10, "t = " + state.t + "° " + "h = " + state.h + "%");
+display.image.stringFT(display.colors.red1, './Roboto-Regular.ttf', 22, 0, 10, 60, "t = " + state.t + "° " + "h = " + state.h + "%");
+display.image.stringFT(display.colors.red2, './Roboto-Regular.ttf', 22, 0, 10, 110, "t = " + state.t + "° " + "h = " + state.h + "%");
+display.image.stringFT(display.colors.red3, './Roboto-Regular.ttf', 22, 0, 10, 160, "t = " + state.t + "° " + "h = " + state.h + "%");
+display.image.stringFT(display.colors.white, './Roboto-Regular.ttf', 22, 0, 10, 210, "t = " + state.t + "° " + "h = " + state.h + "%");
+display.image.stringFT(display.colors.black, './Roboto-Regular.ttf', 22, 0, 10, 260, "t = " + state.t + "° " + "h = " + state.h + "%");
+display.image.stringFT(display.colors.grey1, './Roboto-Regular.ttf', 22, 0, 10, 310, "t = " + state.t + "° " + "h = " + state.h + "%");
+display.image.stringFT(display.colors.grey2, './Roboto-Regular.ttf', 22, 0, 10, 360, "t = " + state.t + "° " + "h = " + state.h + "%");
+display.image.savePng('output.png', 1);
 
 d();
 //

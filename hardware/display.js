@@ -57,8 +57,8 @@ module.exports = class Display {
     bufBlack;
     bufRed;
 
-    EPD_WIDTH = 64;
-    EPD_HEIGHT = 38;
+    EPD_WIDTH = 640;
+    EPD_HEIGHT = 380;
 
     //BCM
     // reset_pin = 17;
@@ -78,7 +78,7 @@ module.exports = class Display {
 
         this.image = gd.createSync(this.width, this.height);
 
-        for (let i = 0; i < 8; i++) this.image.colorAllocate(i, i, i);
+        for (let i = 0; i < 8; i++) this.image.colorAllocate(255 - i * 32, 255 - i * 32, 255 - i * 32);
 
         this.colors = {
             black: 0,
@@ -148,8 +148,11 @@ module.exports = class Display {
         }
         this.send_command(0x04); // # POWER ON
         this.wait();
+
         this.send_command(0x12); // # display refresh
         this.rpio.msleep(100);
+        this.wait();
+
         this.send_command(0x02); // # POWER OFF
         this.wait();
         console.log("update end");

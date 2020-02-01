@@ -47,7 +47,6 @@ updateState();
 display.clear();
 console.log(state);
 font1 = './Kanit-ExtraBold.ttf';
-// font1 = './Roboto-Regular.ttf';
 font2 = './Kanit-Regular.ttf';
 display.image.setAntiAliased(0);
 display.image.filledRectangle(0, 0, display.width, display.height, display.colors.white);

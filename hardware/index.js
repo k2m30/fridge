@@ -98,6 +98,29 @@ function loop() {
 }
 
 function displayLoop() {
+    const font1 = './Kanit-ExtraBold.ttf';
+    const font2 = './Kanit-Regular.ttf';
+    display.image.setAntiAliased(0);
+    display.image.filledRectangle(0, 0, display.width, display.height, display.colors.white);
+    tx = 422;
+    ty = 110;
+
+    display.image.filledRectangle(tx, 0, display.width, display.height, display.colors.yellow);
+    display.image.stringFT(display.colors.white, font1, 72, 0, tx + 10, ty, state.t.toFixed(1));
+    display.image.stringFT(display.colors.white, font2, 28, 0, tx + 175, ty - 45, "°C");
+    display.image.stringFT(display.colors.white, font2, 20, 0, tx + 12, ty - 72, "temperature");
+
+
+    ty = 360;
+    display.image.stringFT(display.colors.white, font1, 72, 0, tx + 10, ty, state.h.toFixed(0));
+    display.image.stringFT(display.colors.white, font2, 28, 0, tx + 119, ty - 45, "%");
+    display.image.stringFT(display.colors.white, font2, 20, 0, tx + 12, ty - 72, "humidity");
+
+    display.image.line(10, 340, 400, 340, display.colors.black);
+    display.image.line(10, 341, 400, 341, display.colors.black);
+
+    display.update();
+
 }
 
 function updateState() {

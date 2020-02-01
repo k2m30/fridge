@@ -86,6 +86,7 @@ module.exports = class Display {
             grey2: 2,
             white: 3,
             red0: 4,
+            yellow: 4,
             red1: 5,
             red2: 6,
             red3: 7

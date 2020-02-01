@@ -218,15 +218,13 @@ module.exports = class Display {
         return 0;
     }
 
-    clear() {
+    clear(color = this.colors.white) {
         console.log("clear start");
         this.send_command(0x10);
-        for (let i = 0; i < this.width / 8 * this.height; i++) {
-            // for i in range(0, int(this.width / 8 * this.height)):
-            this.send_data(0x33);
-            this.send_data(0x33);
-            this.send_data(0x33);
-            this.send_data(0x33);
+        for (let y = 0; y < this.height; y++) {
+            for (let x = 0; x < this.width; x += 2) {
+                this.send_data(color << 4 | color);
+            }
         }
         this.send_command(0x04);// # POWER ON
         this.wait();

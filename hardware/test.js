@@ -1,4 +1,3 @@
-const gd = require('node-gd');
 const Display = require('./display.js');
 const display = new Display();
 let state = {

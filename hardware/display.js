@@ -76,17 +76,19 @@ module.exports = class Display {
         this.width = width || this.EPD_WIDTH;
         this.height = height || this.EPD_HEIGHT;
 
-        this.bufBlack = new Buffer.alloc(this.width * this.height, 0);
-        this.bufRed = new Buffer.alloc(this.width * this.height, 0);
-
         this.image = gd.createSync(this.width, this.height);
 
-        for (let i=0; i<256; i++) this.image.colorAllocate(i, i, i);
+        for (let i = 0; i < 8; i++) this.image.colorAllocate(i, i, i);
 
         this.colors = {
-            white: 32,
-            black: 224,
-            yellow: 128
+            black: 0,
+            grey1: 1,
+            grey2: 2,
+            white: 3,
+            red0: 4,
+            red1: 5,
+            red2: 6,
+            red3: 7
         };
         this.rpio = require('rpio');
         if (os.arch() === 'arm') {
@@ -137,29 +139,19 @@ module.exports = class Display {
 
     update() {
         console.log("update start");
-        let hasBlack = false;
-        let hasRed = false;
-
         for (let y = 0; y < this.height; y++) {
-            for (let x = 0; x < this.width; x++) {
-                let color = this.image.height === this.height
-                    ? this.image.getPixel(x, y)
-                    : this.image.getPixel(this.image.width - y, x);
-                if (color < 64) { //white
-                    this.bufBlack[x + y * this.width] = 0x00;
-                    this.bufRed[x + y * this.width] = 0x00;
-                } else if (color < 192) { //black
-                    hasBlack = true;
-                    this.bufBlack[x + y * this.width] = 0xff;
-                    this.bufRed[x + y * this.width] = 0x00;
-                } else { // red
-                    hasRed = true;
-                    this.bufBlack[x + y * this.width] = 0x00;
-                    this.bufRed[x + y * this.width] = 0xff;
-                }
+            for (let x = 0; x < this.width; x += 2) {
+                let color1 = this.image.getPixel(x, y);
+                let color2 = this.image.getPixel(x + 1, y);
+                this.send_data(color1 << 4 | color2);
             }
         }
-        this.show();
+        this.send_command(0x04); // # POWER ON
+        this.wait();
+        this.send_command(0x12); // # display refresh
+        this.rpio.msleep(100);
+        this.send_command(0x02); // # POWER OFF
+        this.wait();
         console.log("update end");
     }
 
@@ -173,57 +165,6 @@ module.exports = class Display {
         console.log("e-Paper busy release");
     }
 
-    show() {
-        console.log("show start");
-        console.log(this.bufBlack);
-        console.log(this.bufRed);
-        this.send_command(0x10);
-        for (let i = 0; i < this.width / 8 * this.height; i++) {
-            // for i in range(0, int(this.width / 8 * this.height)){
-            console.log(i);
-            let temp1 = this.bufBlack[i];
-            let temp2 = this.bufRed[i];
-            let j = 0;
-            let temp3;
-            while (j < 8) {
-                if ((temp2 & 0x80) === 0x00) {
-                    temp3 = 0x04;
-                } //#red or yellow
-                else if ((temp1 & 0x80) === 0x00) {
-                    temp3 = 0x00;
-                } //#black
-                else {
-                    temp3 = 0x03
-                } //#white
-
-                temp3 = (temp3 << 4) & 0xFF;
-                temp1 = (temp1 << 1) & 0xFF;
-                temp2 = (temp2 << 1) & 0xFF;
-                j += 1;
-                if ((temp2 & 0x80) === 0x00) {
-                    temp3 |= 0x04
-                }              //#red
-                else if ((temp1 & 0x80) === 0x00) {
-                    temp3 |= 0x00
-                }              //#black
-                else {
-                    temp3 |= 0x03
-                }              //#white
-                temp1 = (temp1 << 1) & 0xFF;
-                temp2 = (temp2 << 1) & 0xFF;
-                this.send_data(temp3);
-                j += 1;
-            }
-
-        }
-        this.send_command(0x04); // # POWER ON
-        this.wait();
-        this.send_command(0x12); // # display refresh
-        this.rpio.msleep(100);
-        this.wait();
-        console.log("show end");
-
-    }
 
     init() {
         this.reset();

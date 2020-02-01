@@ -139,11 +139,16 @@ module.exports = class Display {
 
     update() {
         console.log("update start");
+        this.send_command(0x10);
+        let color1, color2, byte;
+
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x += 2) {
-                let color1 = this.image.getPixel(x, y);
-                let color2 = this.image.getPixel(x + 1, y);
-                this.send_data(color1 << 4 | color2);
+                color1 = this.image.getPixel(x, y);
+                color2 = this.image.getPixel(x + 1, y);
+                byte = color1 << 4 | color2;
+                console.log(byte.toString(2));
+                this.send_data(byte);
             }
         }
         this.send_command(0x04); // # POWER ON

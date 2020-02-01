@@ -51,6 +51,33 @@ display.image.stringFT(display.colors.grey1, './Roboto-Regular.ttf', 22, 0, 10, 
 display.image.stringFT(display.colors.grey2, './Roboto-Regular.ttf', 22, 0, 10, 360, "t = " + state.t + "° " + "h = " + state.h + "%");
 display.image.savePng('output.png', 1);
 
+console.log("update start");
+display.send_command(0x10);
+let color1, color2, byte;
+for (let y = 0; y < 384; y++) {
+    for (let x = 0; x < 640; x += 2) {
+        color1 = display.image.getPixel(x, y);
+        color2 = display.image.getPixel(x + 1, y);
+        byte = color1 << 4 | color2;
+        // console.log(byte.toString(2));
+        display.send_data(byte);
+    }
+}
+display.send_command(0x04); // # POWER ON
+display.wait();
+
+display.send_command(0x12); // # display refresh
+display.rpio.msleep(100);
+display.wait();
+
+display.send_command(0x02); // # POWER OFF
+display.wait();
+console.log("update end");
+
+
+
+
+
 d();
 //
 // gd.openFile('/Users/user/projects/e-Paper/pic/7in5c-b.bmp', file, rej => {    console.log(rej);});

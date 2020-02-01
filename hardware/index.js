@@ -87,6 +87,7 @@ function turnFanIfNeeded() {
 }
 
 function loop() {
+    console.log(readBME280(sensor_1));
     Readings.create(readBME280(sensor_1));
     Readings.create(readBME280(sensor_2));
     Readings.create(readBME280(sensor_3));

@@ -175,7 +175,7 @@ module.exports = class Display {
         this.send_data(0x3A); // # PLL:  0-15:0x3C, 15+:0x3A
 
         this.send_command(VCM_DC_SETTING); // # VCM_DC_SETTING
-        this.send_data(0x14); // #this value defines intensity of your red/yellow color
+        this.send_data(0x08); // #this value defines intensity of your red/yellow color
 
         this.send_command(BOOSTER_SOFT_START); // # BOOSTER_SOFT_START
         this.send_data(0xc7);

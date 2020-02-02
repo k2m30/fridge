@@ -198,7 +198,7 @@ async function updateState() {
     const tData = [];
     const hData = [];
 
-    for (let i = 0; i < DATA_DEEP * 4; i += 3) {
+    for (let i = 0; i < DATA_DEEP * 3; i += 3) {
         tData.push((data[i].temperature + data[i + 1].temperature + data[i + 2].temperature) / 3.0);
         hData.push((data[i].humidity + data[i + 1].humidity + data[i + 2].humidity) / 3.0);
     }

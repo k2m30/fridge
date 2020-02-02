@@ -19,7 +19,7 @@ const DATA_DEEP = 50;
 const ZERO_X = 10;
 const END_X = 410;
 const STEP_X = 8;
-const H_ZERO_Y = 340;
+const H_ZERO_Y = 350;
 const T_ZERO_Y = 170;
 
 const rpio = require('rpio');

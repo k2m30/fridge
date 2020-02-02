@@ -131,8 +131,6 @@ function updateState() {
         r3 = data[2];
         r4 = data[3];
 
-        console.log(r1, r2, r3, r4);
-
         const temperatures = [r1.temperature, r2.temperature, r3.temperature, r4.temperature];
         let max = Math.max(...temperatures);
         let min = Math.min(...temperatures);

@@ -13,6 +13,11 @@ db.init();
 const FAN_PIN = 32;
 const FRIDGE_PIN = 36;
 const DOOR_PIN = 12;
+const DATA_DEEP = 50;
+const ZERO_X = 10;
+const STEP_X = 8;
+const H_ZERO_Y = 340;
+const T_ZERO_Y = 220;
 
 const rpio = require('rpio');
 if (os.arch() === 'arm') {
@@ -40,7 +45,9 @@ let state = {
     t: 0,
     h: 0,
     coolingOn: false,
-    fanOn: false
+    fanOn: false,
+    h_data: [],
+    t_data: []
 };
 
 async function turnCoolingIfNeeded() {
@@ -137,6 +144,23 @@ async function displayLoop() {
         display.image.filledRectangle(tx + 120, ty - 200, tx + 120 + 56, ty - 200 + 64, display.colors.yellow);
     }
 
+    for (let i = 0; i < DATA_DEEP - 1; i++) {
+        y0h = H_ZERO_Y - state.h_data[i];
+        y1h = H_ZERO_Y - state.h_data[i + 1];
+
+        y0t = T_ZERO_Y - state.t_data[i]*5;
+        y1t = T_ZERO_Y - state.t_data[i + 1]*5;
+
+        x0 = ZERO_X + i * STEP_X;
+        x1 = ZERO_X + (i + 1) * STEP_X;
+        display.image.line(x0, Math.round(y0h), x1, Math.round(y1h), display.colors.black);
+        display.image.line(x0+1, Math.round(y0h), x1+1, Math.round(y1h), display.colors.black);
+
+        display.image.line(x0, Math.round(y0t), x1, Math.round(y1t), display.colors.black);
+        display.image.line(x0+1, Math.round(y0t), x1+1, Math.round(y1t), display.colors.black);
+    }
+
+
     display.update();
 
 }
@@ -147,6 +171,19 @@ async function updateState() {
     const r2 = data[1];
     const r3 = data[2];
     const r4 = data[3];
+
+    const t_data = [];
+    const h_data = [];
+    data.map(t => {
+        t_data.push(t.temperature);
+        h_data.push(t.humidity * 100)
+    });
+
+    console.log(t_data);
+    console.log(h_data);
+
+    state.h_data = h_data.reverse();
+    state.t_data = t_data.reverse();
 
     const temperatures = [r1.temperature, r2.temperature, r3.temperature, r4.temperature];
 
@@ -200,6 +237,7 @@ async function main() {
     setInterval(displayLoop, 60000);
     setInterval(clearDisplay, 60000 * 60 * 24);
     setInterval(updateState, 60000);
+
     await updateState();
     loop();
     displayLoop();

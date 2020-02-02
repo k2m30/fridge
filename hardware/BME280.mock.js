@@ -28,7 +28,7 @@ module.exports = class BME280 {
         let min = -5.0, max = 4.0;
         this.device.parameters[0].value = 965.0 + Math.floor(Math.random() * (max - min + 1) + min);
         this.device.parameters[1].value = 22.4 + Math.floor(Math.random() * (max - min + 1) + min);
-        this.device.parameters[2].value = 0.78 + Math.floor(Math.random() * (max - min + 1) + min);
+        this.device.parameters[2].value = 0.78 + Math.floor(Math.random() * (max - min + 1) / 100 + min / 100);
         return true;
     }
 };

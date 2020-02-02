@@ -92,17 +92,22 @@ async function turnSonicIfNeeded() {
 
 }
 
+const fanOn = (on = true) => {
+
+    rpio.write(FAN_PIN, on ? rpio.HIGH : rpio.LOW);
+    state.fanOn = on;
+    console.log("Fan is " , ( on ? "on" : "off") );
+
+};
+
 async function turnFanIfNeeded() {
+    //TODO: depends on freezer state;
     if (state.tFrost > 7.0) {
-        rpio.write(FAN_PIN, rpio.LOW);
-        state.fanOn = false;
-        console.log("Fan is off");
+        fanOn(true);
     }
 
     if (state.tFrost < 4.0) {
-        rpio.write(FAN_PIN, rpio.HIGH);
-        state.fanOn = true;
-        console.log("Fan is on");
+        fanOn(false);
     }
 }
 
@@ -267,14 +272,14 @@ async function main() {
 
     app.listen(3000, () => console.log(`Fridge app listening on port 3000!`));
 
-    setInterval(loop, 60000);
+    setInterval(loop, 10000);
     setInterval(displayLoop, 60000);
     setInterval(clearDisplay, 60000 * 60 * 24);
     setInterval(updateState, 60000);
 
     await updateState();
-    loop();
-    displayLoop();
+    await loop();
+    await displayLoop();
 }
 
 main();

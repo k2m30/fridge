@@ -14,6 +14,8 @@ const FAN_PIN = 32;
 const FRIDGE_PIN = 36;
 const DOOR_PIN = 12;
 const DATA_DEEP = 50;
+
+//graph
 const ZERO_X = 10;
 const END_X = 410;
 const STEP_X = 8;
@@ -47,6 +49,10 @@ let state = {
     h: 0,
     coolingOn: false,
     fanOn: false,
+    tHigh: 0,
+    tLow: 0,
+    hHigh: 0,
+    hLow: 0,
     h_data: [],
     t_data: []
 };
@@ -157,17 +163,23 @@ async function displayLoop() {
         display.image.line(x0, Math.round(y0t), x1, Math.round(y1t), display.colors.black);
         display.image.line(x0 + 1, Math.round(y0t), x1 + 1, Math.round(y1t), display.colors.black);
     }
-
+    //axis
     display.image.line(ZERO_X, T_ZERO_Y, END_X, T_ZERO_Y, display.colors.black);
     display.image.line(ZERO_X, T_ZERO_Y + 1, END_X, T_ZERO_Y + 1, display.colors.black);
-
     display.image.line(ZERO_X, T_ZERO_Y, ZERO_X, T_ZERO_Y - 150, display.colors.black);
     display.image.line(ZERO_X + 1, T_ZERO_Y, ZERO_X + 1, T_ZERO_Y - 150, display.colors.black);
-    display.image.line(ZERO_X, H_ZERO_Y, ZERO_X, H_ZERO_Y - 150, display.colors.black);
-    display.image.line(ZERO_X + 1, H_ZERO_Y, ZERO_X + 1, H_ZERO_Y - 150, display.colors.black);
 
     display.image.line(ZERO_X, H_ZERO_Y, END_X, H_ZERO_Y, display.colors.black);
     display.image.line(ZERO_X, H_ZERO_Y + 1, END_X, H_ZERO_Y + 1, display.colors.black);
+    display.image.line(ZERO_X, H_ZERO_Y, ZERO_X, H_ZERO_Y - 150, display.colors.black);
+    display.image.line(ZERO_X + 1, H_ZERO_Y, ZERO_X + 1, H_ZERO_Y - 150, display.colors.black);
+
+    //limits
+    display.image.line(ZERO_X, T_ZERO_Y - state.tLow * 5, END_X, T_ZERO_Y - state.tLow * 5, display.colors.yellow);
+    display.image.line(ZERO_X+1, T_ZERO_Y - state.tLow * 5, END_X+1, T_ZERO_Y - state.tLow * 5, display.colors.yellow);
+
+    display.image.line(ZERO_X, T_ZERO_Y - state.tHigh * 5, END_X, T_ZERO_Y - state.tHigh * 5, display.colors.yellow);
+    display.image.line(ZERO_X+1, T_ZERO_Y - state.tHigh * 5, END_X+1, T_ZERO_Y - state.tHigh * 5, display.colors.yellow);
 
 
     display.update();
@@ -187,6 +199,12 @@ async function updateState() {
         t_data.push(t.temperature);
         h_data.push(t.humidity)
     });
+
+    settings = await Settings.findAll();
+    state.tLow = settings[0].tLow;
+    state.tHigh = settings[0].tHigh;
+    state.hLow = settings[0].hLow;
+    state.hHigh = settings[0].hHigh;
 
     console.log(t_data);
     console.log(h_data);

@@ -198,7 +198,7 @@ module.exports = class BME280 {
         }
 
         // read the entire data block at once and pry out the values as we need them
-        this.bus.readI2cBlock(this.device.addr, this.register.PRESSUREDATA, 8, new Buffer(8), (err, bytesRead, buffer) => {
+        this.bus.readI2cBlock(this.device.addr, this.register.PRESSUREDATA, 8, new Buffer.alloc(8), (err, bytesRead, buffer) => {
 
             if (err) {
                 callback(err);
@@ -221,7 +221,7 @@ module.exports = class BME280 {
             this.setMode('forced');
         }
 
-        var buffer = new Buffer(8);
+        var buffer = new Buffer.alloc(8);
         this.bus.readI2cBlockSync(this.device.addr, this.register.PRESSUREDATA, 8, buffer);
         this.setTemperature(BME280.uint20(buffer[3], buffer[4], buffer[5]));
         this.setPressure(BME280.uint20(buffer[0], buffer[1], buffer[2]));
@@ -305,7 +305,7 @@ module.exports = class BME280 {
     }
 
     setCalibration() {
-        let buffer = new Buffer(24);
+        let buffer = new Buffer.alloc(24);
         this.bus.readI2cBlockSync(this.device.addr, this.register.DIG_T1, 24, buffer);
 
         let h1 = this.bus.readByteSync(this.device.addr, this.register.DIG_H1);

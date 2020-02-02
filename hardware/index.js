@@ -122,19 +122,20 @@ async function displayLoop() {
     display.image.line(10, 340, 400, 340, display.colors.black);
     display.image.line(10, 341, 400, 341, display.colors.black);
 
-    if (state.fanOn) {
-        fan = gd.openFile('./fan-solid.gif');
-        fan.copy(display.image, tx + 30, ty - 200, 0, 0, 64, 64);
-    } else {
-        display.image.filledRectangle(tx + 30, ty - 200, tx + 30 + 64, ty - 200 + 64, display.colors.yellow);
-    }
+    let fan, flake;
+    // if (state.fanOn) {
+    fan = await gd.openFile('./fan-solid.gif');
+    fan.copy(display.image, tx + 30, ty - 200, 0, 0, 64, 64);
+    // } else {
+    //     display.image.filledRectangle(tx + 30, ty - 200, tx + 30 + 64, ty - 200 + 64, display.colors.yellow);
+    // }
 
-    if (state.coolingOn) {
-        flake = gd.openFile('./snowflake.gif');
-        flake.copy(display.image, tx + 120, ty - 200, 0, 0, 56, 64);
-    } else {
-        display.image.filledRectangle(tx + 120, ty - 200, tx + 120 + 56, ty - 200 + 64, display.colors.yellow);
-    }
+    // if (state.coolingOn) {
+    flake = await gd.openFile('./snowflake.gif');
+    flake.copy(display.image, tx + 120, ty - 200, 0, 0, 56, 64);
+    // } else {
+    //     display.image.filledRectangle(tx + 120, ty - 200, tx + 120 + 56, ty - 200 + 64, display.colors.yellow);
+    // }
 
     display.update();
 

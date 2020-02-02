@@ -68,6 +68,7 @@ display.image.stringFT(display.colors.white, font2, 20, 0, tx + 12, ty - 72, "hu
 display.image.line(10, 340, 400, 340, display.colors.black);
 display.image.line(10, 341, 400, 341, display.colors.black);
 
+let fan, flake;
 if (state.fanOn) {
     fan = gd.openFile('./fan-solid.gif');
     fan.copy(display.image, tx + 30, ty - 200, 0, 0, 64, 64);

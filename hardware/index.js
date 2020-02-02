@@ -22,6 +22,9 @@ const STEP_X = 8;
 const H_ZERO_Y = 360;
 const T_ZERO_Y = 170;
 
+const T_DIFF_HIGH_FAN_ON = 8;
+const T_DIFF_LOW_FAN_OFF = 4;
+
 const rpio = require('rpio');
 if (os.arch() === 'arm') {
     rpio.init({mapping: 'physical', gpiomem: false});
@@ -101,14 +104,19 @@ const fanOn = (on = true) => {
 };
 
 async function turnFanIfNeeded() {
-    //TODO: depends on freezer state;
-    if (state.tFrost > 7.0) {
+
+    if (state.coolingOn) {
         fanOn(true);
+    } else {
+        if ( Math.abs(state.t - state.tFrost) > T_DIFF_HIGH_FAN_ON) {
+            fanOn(true);
+        }
+
+        if ( Math.abs(state.t - state.tFrost) < T_DIFF_LOW_FAN_OFF) {
+            fanOn(false);
+        }
     }
 
-    if (state.tFrost < 4.0) {
-        fanOn(false);
-    }
 }
 
 async function loop() {
@@ -275,7 +283,7 @@ async function main() {
 
     app.listen(3000, () => console.log(`Fridge app listening on port 3000!`));
 
-    setInterval(loop, 10000);
+    setInterval(loop, 30000);
     setInterval(displayLoop, 60000);
     setInterval(clearDisplay, 60000 * 60 * 24);
     setInterval(updateState, 60000);

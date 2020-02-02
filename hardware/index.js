@@ -191,8 +191,8 @@ async function displayLoop() {
     display.image.stringFT(display.colors.yellow, font2, 12, 0, ZERO_X + 4, H_ZERO_Y - state.hHigh - 4, state.hHigh.toFixed(0) + '%');
     display.image.stringFT(display.colors.yellow, font2, 12, 0, ZERO_X + 4, H_ZERO_Y - state.hLow + 14, state.hLow.toFixed(0) + '%');
 
-    display.image.stringFT(display.colors.yellow, font2, 12, 0, ZERO_X + 4, T_ZERO_Y - state.tHigh * 5 - 4, state.hHigh.toFixed(0) + '°C');
-    display.image.stringFT(display.colors.yellow, font2, 12, 0, ZERO_X + 4, T_ZERO_Y - state.tLow * 5 + 14, state.hLow.toFixed(0) + '°C');
+    display.image.stringFT(display.colors.yellow, font2, 12, 0, ZERO_X + 4, T_ZERO_Y - state.tHigh * 5 - 4, state.tHigh.toFixed(0) + '°C');
+    display.image.stringFT(display.colors.yellow, font2, 12, 0, ZERO_X + 4, T_ZERO_Y - state.tLow * 5 + 14, state.tLow.toFixed(0) + '°C');
 
     display.update();
 

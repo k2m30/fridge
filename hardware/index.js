@@ -123,12 +123,12 @@ async function displayLoop() {
     display.image.line(10, 341, 400, 341, display.colors.black);
 
     let fan, flake;
-    if (state.fanOn) {
+    // if (state.fanOn) {
         fan = gd.openFile('./fan-solid.gif');
         display.addImage(fan, tx + 30, ty - 200, 2, display.colors.white);
-    } else {
-        display.image.filledRectangle(tx + 30, ty - 200, tx + 30 + 64, ty - 200 + 64, display.colors.yellow);
-    }
+    // } else {
+    //     display.image.filledRectangle(tx + 30, ty - 200, tx + 30 + 64, ty - 200 + 64, display.colors.yellow);
+    // }
 
     if (state.coolingOn) {
         flake = gd.openFile('./snowflake.gif');

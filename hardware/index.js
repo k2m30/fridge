@@ -190,14 +190,17 @@ async function displayLoop() {
 }
 
 async function updateState() {
-    const data = await Readings.findAll({limit: DATA_DEEP * 4, order: [['id', 'DESC']]});
+    const data = await Readings.findAll({
+        limit: DATA_DEEP * 3,
+        order: [['id', 'DESC']],
+        where: {[db.Op.or]: [{sensorID: 3}, {sensorID: 4}, {sensorID: 5}]}
+    });
     const tData = [];
     const hData = [];
 
-    for (let i = 0; i < DATA_DEEP * 4; i += 4) {
-        console.log(data[0].temperature);
-        tData.push((data[i + 1].temperature + data[i + 2].temperature + data[i + 3].temperature) / 3.0);
-        hData.push((data[i + 1].humidity + data[i + 2].humidity + data[i + 3].humidity) / 3.0);
+    for (let i = 0; i < DATA_DEEP * 4; i += 3) {
+        tData.push((data[i].temperature + data[i + 1].temperature + data[i + 2].temperature) / 3.0);
+        hData.push((data[i].humidity + data[i + 1].humidity + data[i + 2].humidity) / 3.0);
     }
 
     state.hData = hData.reverse();

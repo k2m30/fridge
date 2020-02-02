@@ -1,6 +1,8 @@
 const SQLite3 = require('sequelize');
+const Op = SQLite3.Op;
 
 module.exports = {
+    Op: Op,
     Reading: class extends SQLite3.Model {
     },
     Setting: class extends SQLite3.Model {

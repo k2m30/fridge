@@ -188,7 +188,8 @@ async function displayLoop() {
     display.image.line(ZERO_X, H_ZERO_Y - state.hHigh, END_X, H_ZERO_Y - state.hHigh, display.colors.yellow);
     display.image.line(ZERO_X, H_ZERO_Y + 1 - state.hHigh, END_X, H_ZERO_Y + 1 - state.hHigh, display.colors.yellow);
 
-    display.image.stringFT(display.colors.yellow, font2, 12, 0, ZERO_X + 4, H_ZERO_Y - state.hHigh - 14, state.hHigh.toFixed(0));
+    display.image.stringFT(display.colors.yellow, font2, 12, 0, ZERO_X + 4, H_ZERO_Y - state.hHigh - 4, state.hHigh.toFixed(0));
+    display.image.stringFT(display.colors.yellow, font2, 12, 0, ZERO_X + 4, H_ZERO_Y - state.hHigh + 14, state.hLow.toFixed(0));
 
     display.update();
 

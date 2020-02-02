@@ -212,7 +212,8 @@ async function updateState() {
     state.hLow = Math.round(settings[0].hLow);
 
     state.hHigh = Math.round(settings[0].hHigh);
-    state.tFrost = data[0].temperature;
+    const tFrost = await Readings.findAll({limit: 1, order: [['id', 'DESC']], where: {sensorID: 1}});
+    state.tFrost = tFrost[0].temperature;
     state.t = (data[1].temperature + data[2].temperature + data[3].temperature) / 3.0;
     state.h = (data[1].humidity + data[2].humidity + data[3].humidity) / 3.0;
 

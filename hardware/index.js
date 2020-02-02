@@ -176,10 +176,17 @@ async function displayLoop() {
 
     //limits
     display.image.line(ZERO_X, T_ZERO_Y - state.tLow * 5, END_X, T_ZERO_Y - state.tLow * 5, display.colors.yellow);
-    display.image.line(ZERO_X+1, T_ZERO_Y - state.tLow * 5, END_X+1, T_ZERO_Y - state.tLow * 5, display.colors.yellow);
+    display.image.line(ZERO_X, T_ZERO_Y + 1 - state.tLow * 5, END_X, T_ZERO_Y + 1 - state.tLow * 5, display.colors.yellow);
 
     display.image.line(ZERO_X, T_ZERO_Y - state.tHigh * 5, END_X, T_ZERO_Y - state.tHigh * 5, display.colors.yellow);
-    display.image.line(ZERO_X+1, T_ZERO_Y - state.tHigh * 5, END_X+1, T_ZERO_Y - state.tHigh * 5, display.colors.yellow);
+    display.image.line(ZERO_X, T_ZERO_Y + 1 - state.tHigh * 5, END_X, T_ZERO_Y + 1 - state.tHigh * 5, display.colors.yellow);
+
+    //limits
+    display.image.line(ZERO_X, H_ZERO_Y - state.hLow, END_X, H_ZERO_Y - state.hLow, display.colors.yellow);
+    display.image.line(ZERO_X, H_ZERO_Y + 1 - state.hLow, END_X, H_ZERO_Y + 1 - state.hLow, display.colors.yellow);
+
+    display.image.line(ZERO_X, H_ZERO_Y - state.hHigh, END_X, H_ZERO_Y - state.hHigh, display.colors.yellow);
+    display.image.line(ZERO_X, H_ZERO_Y + 1 - state.hHigh, END_X, H_ZERO_Y + 1 - state.hHigh, display.colors.yellow);
 
 
     display.update();

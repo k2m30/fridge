@@ -15,9 +15,10 @@ const FRIDGE_PIN = 36;
 const DOOR_PIN = 12;
 const DATA_DEEP = 50;
 const ZERO_X = 10;
+const END_X = 410;
 const STEP_X = 8;
 const H_ZERO_Y = 340;
-const T_ZERO_Y = 220;
+const T_ZERO_Y = 170;
 
 const rpio = require('rpio');
 if (os.arch() === 'arm') {
@@ -126,9 +127,6 @@ async function displayLoop() {
     display.image.stringFT(display.colors.white, font2, 28, 0, tx + 119, ty - 45, "%");
     display.image.stringFT(display.colors.white, font2, 20, 0, tx + 12, ty - 72, "humidity");
 
-    display.image.line(10, 340, 400, 340, display.colors.black);
-    display.image.line(10, 341, 400, 341, display.colors.black);
-
     let fan, flake;
     if (state.fanOn) {
         fan = gd.openFile('./fan-solid.gif');
@@ -145,20 +143,29 @@ async function displayLoop() {
     }
 
     for (let i = 0; i < DATA_DEEP - 1; i++) {
-        y0h = H_ZERO_Y - state.h_data[i];
-        y1h = H_ZERO_Y - state.h_data[i + 1];
+        const y0h = H_ZERO_Y - state.h_data[i];
+        const y1h = H_ZERO_Y - state.h_data[i + 1];
 
-        y0t = T_ZERO_Y - state.t_data[i] * 5;
-        y1t = T_ZERO_Y - state.t_data[i + 1] * 5;
+        const y0t = T_ZERO_Y - state.t_data[i] * 5;
+        const y1t = T_ZERO_Y - state.t_data[i + 1] * 5;
 
-        x0 = ZERO_X + i * STEP_X;
-        x1 = ZERO_X + (i + 1) * STEP_X;
+        const x0 = ZERO_X + i * STEP_X;
+        const x1 = ZERO_X + (i + 1) * STEP_X;
         display.image.line(x0, Math.round(y0h), x1, Math.round(y1h), display.colors.black);
         display.image.line(x0 + 1, Math.round(y0h), x1 + 1, Math.round(y1h), display.colors.black);
 
         display.image.line(x0, Math.round(y0t), x1, Math.round(y1t), display.colors.black);
         display.image.line(x0 + 1, Math.round(y0t), x1 + 1, Math.round(y1t), display.colors.black);
     }
+
+    display.image.line(ZERO_X, T_ZERO_Y, END_X, T_ZERO_Y, display.colors.black);
+    display.image.line(ZERO_X, T_ZERO_Y + 1, END_X, T_ZERO_Y + 1, display.colors.black);
+
+    display.image.line(ZERO_X, T_ZERO_Y, ZERO_X, T_ZERO_Y - 150, display.colors.black);
+    display.image.line(ZERO_X, H_ZERO_Y, ZERO_X, H_ZERO_Y - 150, display.colors.black);
+
+    display.image.line(ZERO_X, H_ZERO_Y, END_X, T_ZERO_Y, display.colors.black);
+    display.image.line(ZERO_X, H_ZERO_Y + 1, END_X, T_ZERO_Y + 1, display.colors.black);
 
 
     display.update();

@@ -208,10 +208,10 @@ async function updateState() {
     });
 
     settings = await Settings.findAll();
-    state.tLow = settings[0].tLow;
-    state.tHigh = settings[0].tHigh;
-    state.hLow = settings[0].hLow;
-    state.hHigh = settings[0].hHigh;
+    state.tLow = Math.round(settings[0].tLow);
+    state.tHigh = Math.round(settings[0].tHigh);
+    state.hLow = Math.round(settings[0].hLow);
+    state.hHigh = Math.round(settings[0].hHigh);
 
     console.log(t_data);
     console.log(h_data);

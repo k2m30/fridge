@@ -22,8 +22,8 @@ const STEP_X = 8;
 const H_ZERO_Y = 360;
 const T_ZERO_Y = 170;
 
-const T_DIFF_HIGH_FAN_ON = 5;
-const T_DIFF_LOW_FAN_OFF = 2;
+const T_DIFF_HIGH_FAN_ON = 3;
+const T_DIFF_LOW_FAN_OFF = 1;
 
 const rpio = require('rpio');
 if (os.arch() === 'arm') {

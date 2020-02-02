@@ -152,8 +152,8 @@ async function displayLoop() {
         const y0h = H_ZERO_Y - state.hData[i];
         const y1h = H_ZERO_Y - state.hData[i + 1];
 
-        const y0t = T_ZERO_Y - state.tData[i] * 5;
-        const y1t = T_ZERO_Y - state.tData[i + 1] * 5;
+        const y0t = T_ZERO_Y - state.tData[i] * 8;
+        const y1t = T_ZERO_Y - state.tData[i + 1] * 8;
 
         const x0 = ZERO_X + i * STEP_X;
         const x1 = ZERO_X + (i + 1) * STEP_X;
@@ -166,20 +166,20 @@ async function displayLoop() {
     //axis
     display.image.line(ZERO_X, T_ZERO_Y, END_X, T_ZERO_Y, display.colors.black);
     display.image.line(ZERO_X, T_ZERO_Y + 1, END_X, T_ZERO_Y + 1, display.colors.black);
-    display.image.line(ZERO_X, T_ZERO_Y, ZERO_X, T_ZERO_Y - 150, display.colors.black);
-    display.image.line(ZERO_X + 1, T_ZERO_Y, ZERO_X + 1, T_ZERO_Y - 150, display.colors.black);
+    display.image.line(ZERO_X, T_ZERO_Y, ZERO_X, T_ZERO_Y - 100, display.colors.black);
+    display.image.line(ZERO_X + 1, T_ZERO_Y, ZERO_X + 1, T_ZERO_Y - 100, display.colors.black);
 
     display.image.line(ZERO_X, H_ZERO_Y, END_X, H_ZERO_Y, display.colors.black);
     display.image.line(ZERO_X, H_ZERO_Y + 1, END_X, H_ZERO_Y + 1, display.colors.black);
-    display.image.line(ZERO_X, H_ZERO_Y, ZERO_X, H_ZERO_Y - 150, display.colors.black);
-    display.image.line(ZERO_X + 1, H_ZERO_Y, ZERO_X + 1, H_ZERO_Y - 150, display.colors.black);
+    display.image.line(ZERO_X, H_ZERO_Y, ZERO_X, H_ZERO_Y - 100, display.colors.black);
+    display.image.line(ZERO_X + 1, H_ZERO_Y, ZERO_X + 1, H_ZERO_Y - 100, display.colors.black);
 
     //limits
-    display.image.line(ZERO_X, T_ZERO_Y - state.tLow * 5, END_X, T_ZERO_Y - state.tLow * 5, display.colors.yellow);
-    display.image.line(ZERO_X, T_ZERO_Y + 1 - state.tLow * 5, END_X, T_ZERO_Y + 1 - state.tLow * 5, display.colors.yellow);
+    display.image.line(ZERO_X, T_ZERO_Y - state.tLow * 8, END_X, T_ZERO_Y - state.tLow * 8, display.colors.yellow);
+    display.image.line(ZERO_X, T_ZERO_Y + 1 - state.tLow * 8, END_X, T_ZERO_Y + 1 - state.tLow * 8, display.colors.yellow);
 
-    display.image.line(ZERO_X, T_ZERO_Y - state.tHigh * 5, END_X, T_ZERO_Y - state.tHigh * 5, display.colors.yellow);
-    display.image.line(ZERO_X, T_ZERO_Y + 1 - state.tHigh * 5, END_X, T_ZERO_Y + 1 - state.tHigh * 5, display.colors.yellow);
+    display.image.line(ZERO_X, T_ZERO_Y - state.tHigh * 8, END_X, T_ZERO_Y - state.tHigh * 8, display.colors.yellow);
+    display.image.line(ZERO_X, T_ZERO_Y + 1 - state.tHigh * 8, END_X, T_ZERO_Y + 1 - state.tHigh * 8, display.colors.yellow);
 
     //limits
     display.image.line(ZERO_X, H_ZERO_Y - state.hLow, END_X, H_ZERO_Y - state.hLow, display.colors.yellow);
@@ -191,8 +191,8 @@ async function displayLoop() {
     display.image.stringFT(display.colors.yellow, font2, 12, 0, ZERO_X + 4, H_ZERO_Y - state.hHigh - 4, state.hHigh.toFixed(0) + '%');
     display.image.stringFT(display.colors.yellow, font2, 12, 0, ZERO_X + 4, H_ZERO_Y - state.hLow + 14, state.hLow.toFixed(0) + '%');
 
-    display.image.stringFT(display.colors.yellow, font2, 12, 0, ZERO_X + 4, T_ZERO_Y - state.tHigh * 5 - 4, state.tHigh.toFixed(0) + '°C');
-    display.image.stringFT(display.colors.yellow, font2, 12, 0, ZERO_X + 4, T_ZERO_Y - state.tLow * 5 + 14, state.tLow.toFixed(0) + '°C');
+    display.image.stringFT(display.colors.yellow, font2, 12, 0, ZERO_X + 4, T_ZERO_Y - state.tHigh * 8 - 4, state.tHigh.toFixed(0) + '°C');
+    display.image.stringFT(display.colors.yellow, font2, 12, 0, ZERO_X + 4, T_ZERO_Y - state.tLow * 8 + 14, state.tLow.toFixed(0) + '°C');
 
     display.update();
 

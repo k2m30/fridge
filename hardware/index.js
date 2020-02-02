@@ -63,11 +63,13 @@ async function turnCoolingIfNeeded() {
         if (state.t > s.tHigh) {
             rpio.write(FRIDGE_PIN, rpio.LOW);
             state.coolingOn = true;
+            console.log("Fridge is on");
         }
 
         if (state.t < s.tLow) {
             rpio.write(FRIDGE_PIN, rpio.HIGH);
             state.coolingOn = false;
+            console.log("Fridge is off");
         }
 
     });
@@ -94,11 +96,13 @@ async function turnFanIfNeeded() {
     if (state.tFrost > 7.0) {
         rpio.write(FAN_PIN, rpio.LOW);
         state.fanOn = false;
+        console.log("Fan is off");
     }
 
     if (state.tFrost < 4.0) {
         rpio.write(FAN_PIN, rpio.HIGH);
         state.fanOn = true;
+        console.log("Fan is on");
     }
 }
 

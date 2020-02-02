@@ -151,13 +151,13 @@ module.exports = class Display {
     }
 
     wait() {
-        console.log("e-Paper busy");
+        // console.log("e-Paper busy");
         if (os.arch() === 'arm') {
             while (this.rpio.read(BUSY_PIN) === 0) {  //    # 0: idle, 1: busy
                 this.rpio.msleep(100);
             }
         }
-        console.log("e-Paper busy release");
+        // console.log("e-Paper busy release");
     }
 
 

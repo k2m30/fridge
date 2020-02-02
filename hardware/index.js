@@ -19,7 +19,7 @@ const DATA_DEEP = 50;
 const ZERO_X = 10;
 const END_X = 410;
 const STEP_X = 8;
-const H_ZERO_Y = 350;
+const H_ZERO_Y = 360;
 const T_ZERO_Y = 170;
 
 const rpio = require('rpio');
@@ -166,8 +166,8 @@ async function displayLoop() {
     //axis
     display.image.line(ZERO_X, T_ZERO_Y, END_X, T_ZERO_Y, display.colors.black);
     display.image.line(ZERO_X, T_ZERO_Y + 1, END_X, T_ZERO_Y + 1, display.colors.black);
-    display.image.line(ZERO_X, T_ZERO_Y, ZERO_X, T_ZERO_Y - 100, display.colors.black);
-    display.image.line(ZERO_X + 1, T_ZERO_Y, ZERO_X + 1, T_ZERO_Y - 100, display.colors.black);
+    display.image.line(ZERO_X, T_ZERO_Y, ZERO_X, T_ZERO_Y - 150, display.colors.black);
+    display.image.line(ZERO_X + 1, T_ZERO_Y, ZERO_X + 1, T_ZERO_Y - 150, display.colors.black);
 
     display.image.line(ZERO_X, H_ZERO_Y, END_X, H_ZERO_Y, display.colors.black);
     display.image.line(ZERO_X, H_ZERO_Y + 1, END_X, H_ZERO_Y + 1, display.colors.black);

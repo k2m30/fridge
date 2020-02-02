@@ -2,45 +2,6 @@
 const os = require('os');
 const gd = require('node-gd');
 
-// EPD7IN5B commands
-// #define PANEL_SETTING                               0x00
-// #define POWER_SETTING                               0x01
-// #define POWER_OFF                                   0x02
-// #define POWER_OFF_SEQUENCE_SETTING                  0x03
-// #define POWER_ON                                    0x04
-// #define POWER_ON_MEASURE                            0x05
-// #define BOOSTER_SOFT_START                          0x06
-// #define DEEP_SLEEP                                  0x07
-// #define DATA_START_TRANSMISSION_1                   0x10
-// #define DATA_STOP                                   0x11
-// #define DISPLAY_REFRESH                             0x12
-// #define IMAGE_PROCESS                               0x13
-// #define LUT_FOR_VCOM                                0x20
-// #define LUT_BLUE                                    0x21
-// #define LUT_WHITE                                   0x22
-// #define LUT_GRAY_1                                  0x23
-// #define LUT_GRAY_2                                  0x24
-// #define LUT_RED_0                                   0x25
-// #define LUT_RED_1                                   0x26
-// #define LUT_RED_2                                   0x27
-// #define LUT_RED_3                                   0x28
-// #define LUT_XON                                     0x29
-// #define PLL_CONTROL                                 0x30
-// #define TEMPERATURE_SENSOR_COMMAND                  0x40
-// #define TEMPERATURE_CALIBRATION                     0x41
-// #define TEMPERATURE_SENSOR_WRITE                    0x42
-// #define TEMPERATURE_SENSOR_READ                     0x43
-// #define VCOM_AND_DATA_INTERVAL_SETTING              0x50
-// #define LOW_POWER_DETECTION                         0x51
-// #define TCON_SETTING                                0x60
-// #define TCON_RESOLUTION                             0x61
-// #define SPI_FLASH_CONTROL                           0x65
-// #define REVISION                                    0x70
-// #define GET_STATUS                                  0x71
-// #define AUTO_MEASUREMENT_VCOM                       0x80
-// #define READ_VCOM_VALUE                             0x81
-// #define VCM_DC_SETTING                              0x82
-
 
 function getBuffer(data) {
     if (Array.isArray(data)) {
@@ -49,6 +10,47 @@ function getBuffer(data) {
         return new Buffer.from([data]);
     }
 }
+
+// EPD7IN5B commands
+const PANEL_SETTING = 0x00;
+const POWER_SETTING = 0x01;
+const POWER_OFF = 0x02;
+const POWER_OFF_SEQUENCE_SETTING = 0x03;
+const POWER_ON = 0x04;
+const POWER_ON_MEASURE = 0x05;
+const BOOSTER_SOFT_START = 0x06;
+const DEEP_SLEEP = 0x07;
+const DATA_START_TRANSMISSION_1 = 0x10;
+const DATA_STOP = 0x11;
+const DISPLAY_REFRESH = 0x12;
+const IMAGE_PROCESS = 0x13;
+const LUT_FOR_VCOM = 0x20;
+const LUT_BLUE = 0x21;
+const LUT_WHITE = 0x22;
+const LUT_GRAY_1 = 0x23;
+const LUT_GRAY_2 = 0x24;
+const LUT_RED_0 = 0x25;
+const LUT_RED_1 = 0x26;
+const LUT_RED_2 = 0x27;
+const LUT_RED_3 = 0x28;
+const LUT_XON = 0x29;
+const PLL_CONTROL = 0x30;
+const TEMPERATURE_SENSOR_COMMAND = 0x40;
+const TEMPERATURE_CALIBRATION = 0x41;
+const TEMPERATURE_SENSOR_WRITE = 0x42;
+const TEMPERATURE_SENSOR_READ = 0x43;
+const VCOM_AND_DATA_INTERVAL_SETTING = 0x50;
+const LOW_POWER_DETECTION = 0x51;
+const TCON_SETTING = 0x60;
+const TCON_RESOLUTION = 0x61;
+const SPI_FLASH_CONTROL = 0x65;
+const REVISION = 0x70;
+const GET_STATUS = 0x71;
+const AUTO_MEASUREMENT_VCOM = 0x80;
+const READ_VCOM_VALUE = 0x81;
+const VCM_DC_SETTING = 0x82;
+const FLASH_MODE = 0xe5;
+
 
 
 module.exports = class Display {
@@ -131,7 +133,7 @@ module.exports = class Display {
 
     update() {
         console.log("update start");
-        this.send_command(0x10);
+        this.send_command(DATA_START_TRANSMISSION_1);
         let color1, color2, byte;
 
         for (let y = 0; y < this.height; y++) {
@@ -143,14 +145,14 @@ module.exports = class Display {
                 this.send_data(byte);
             }
         }
-        this.send_command(0x04); // # POWER ON
+        this.send_command(POWER_ON); // # POWER ON
         this.wait();
 
-        this.send_command(0x12); // # display refresh
+        this.send_command(DISPLAY_REFRESH); // # display refresh
         this.rpio.msleep(100);
         this.wait();
 
-        this.send_command(0x02); // # POWER OFF
+        this.send_command(POWER_OFF); // # POWER OFF
         this.wait();
         console.log("update end");
     }
@@ -169,41 +171,41 @@ module.exports = class Display {
     init() {
         this.reset();
 
-        this.send_command(0x01); // # POWER_SETTING
+        this.send_command(POWER_SETTING); // # POWER_SETTING
         this.send_data(0x37);
         this.send_data(0x00);
 
-        this.send_command(0x00);// # PANEL_SETTING
+        this.send_command(PANEL_SETTING);// # PANEL_SETTING
         this.send_data(0xCF);
         this.send_data(0x08);
 
-        this.send_command(0x30); // # PLL_CONTROL
+        this.send_command(PLL_CONTROL); // # PLL_CONTROL
         this.send_data(0x3A); // # PLL:  0-15:0x3C, 15+:0x3A
 
-        this.send_command(0x82); // # VCM_DC_SETTING
-        this.send_data(0x14); // #all temperature  range
+        this.send_command(VCM_DC_SETTING); // # VCM_DC_SETTING
+        this.send_data(0x14); // #this value defines intensity of your red/yellow color
 
-        this.send_command(0x06); // # BOOSTER_SOFT_START
+        this.send_command(BOOSTER_SOFT_START); // # BOOSTER_SOFT_START
         this.send_data(0xc7);
         this.send_data(0xcc);
         this.send_data(0x15);
 
-        this.send_command(0x50); // # VCOM AND DATA INTERVAL SETTING
+        this.send_command(VCOM_AND_DATA_INTERVAL_SETTING); // # VCOM AND DATA INTERVAL SETTING
         this.send_data(0x77);
 
-        this.send_command(0x60); // # TCON_SETTING
+        this.send_command(TCON_SETTING); // # TCON_SETTING
         this.send_data(0x22);
 
-        this.send_command(0x65); // # FLASH CONTROL
+        this.send_command(SPI_FLASH_CONTROL); // # FLASH CONTROL
         this.send_data(0x00);
 
-        this.send_command(0x61); // # TCON_RESOLUTION
+        this.send_command(TCON_RESOLUTION); // # TCON_RESOLUTION
         this.send_data(this.width >> 8); // # source 640
         this.send_data(this.width & 0xff); //
         this.send_data(this.height >> 8); // # gate 384
         this.send_data(this.height & 0xff);
 
-        this.send_command(0xe5); // # FLASH MODE
+        this.send_command(FLASH_MODE); // # FLASH MODE
         this.send_data(0x03);
 
         return 0;
@@ -211,15 +213,15 @@ module.exports = class Display {
 
     clear(color = this.colors.white) {
         console.log("clear start");
-        this.send_command(0x10);
+        this.send_command(DATA_START_TRANSMISSION_1);
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x += 2) {
                 this.send_data(color << 4 | color);
             }
         }
-        this.send_command(0x04);// # POWER ON
+        this.send_command(POWER_ON);// # POWER ON
         this.wait();
-        this.send_command(0x12);// # display refresh
+        this.send_command(DISPLAY_REFRESH);// # display refresh
         this.rpio.msleep(100);
         this.wait();
         console.log("clear end");
@@ -227,10 +229,10 @@ module.exports = class Display {
 
     stand_by() {
         return new Promise(resolve => {
-            this.send_command(0x02);// # POWER_OFF
+            this.send_command(POWER_OFF);// # POWER_OFF
             this.wait();
 
-            this.send_command(0x07); // # DEEP_SLEEP
+            this.send_command(DEEP_SLEEP); // # DEEP_SLEEP
             this.send_data(0XA5);
 
             // this.rpio.spiEnd();

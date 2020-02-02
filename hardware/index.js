@@ -11,6 +11,7 @@ db.init();
 //physical pins
 const FAN_PIN = 32;
 const FRIDGE_PIN = 36;
+const DOOR_PIN = 12;
 
 const rpio = require('rpio');
 if (os.arch() === 'arm') {
@@ -21,7 +22,7 @@ if (os.arch() === 'arm') {
 }
 rpio.open(FRIDGE_PIN, rpio.OUTPUT);
 rpio.open(FAN_PIN, rpio.OUTPUT);
-
+rpio.open(DOOR_PIN, rpio.INPUT);
 
 const display = new Display(rpio);
 
@@ -41,7 +42,7 @@ let state = {
     fanOn: false
 };
 
-function turnCoolingIfNeeded() {
+async function turnCoolingIfNeeded() {
     Settings.findAll().then(settings => settings[0]).then(s => {
         if (state.t > s.tHigh) {
             rpio.write(FRIDGE_PIN, rpio.LOW);
@@ -56,7 +57,7 @@ function turnCoolingIfNeeded() {
     });
 }
 
-function readBME280(device) {
+async function readBME280(device) {
     device.getDataFromDeviceSync();
     return {
         sensorID: device.device.bus,
@@ -67,11 +68,11 @@ function readBME280(device) {
 }
 
 
-function turnSonicIfNeeded() {
+async function turnSonicIfNeeded() {
 
 }
 
-function turnFanIfNeeded() {
+async function turnFanIfNeeded() {
     Settings.findAll().then(settings => settings[0]).then(s => {
         if (state.h > s.hHigh) {
             rpio.write(FAN_PIN, rpio.LOW);
@@ -86,25 +87,25 @@ function turnFanIfNeeded() {
 
 }
 
-function loop() {
-    console.log(readBME280(sensor_1));
-    Readings.create(readBME280(sensor_1));
-    Readings.create(readBME280(sensor_2));
-    Readings.create(readBME280(sensor_3));
-    Readings.create(readBME280(sensor_4));
+async function loop() {
+    // console.log(readBME280(sensor_1));
+    await Readings.create(await readBME280(sensor_1));
+    await Readings.create(await readBME280(sensor_2));
+    await Readings.create(await readBME280(sensor_3));
+    await Readings.create(await readBME280(sensor_4));
 
-    turnCoolingIfNeeded();
-    turnSonicIfNeeded();
-    turnFanIfNeeded();
+    await turnCoolingIfNeeded();
+    await turnSonicIfNeeded();
+    await turnFanIfNeeded();
 }
 
-function displayLoop() {
+async function displayLoop() {
     const font1 = './Kanit-ExtraBold.ttf';
     const font2 = './Kanit-Regular.ttf';
     display.image.setAntiAliased(0);
     display.image.filledRectangle(0, 0, display.width, display.height, display.colors.white);
-    tx = 422;
-    ty = 110;
+    let tx = 422;
+    let ty = 110;
 
     display.image.filledRectangle(tx, 0, display.width, display.height, display.colors.yellow);
     display.image.stringFT(display.colors.white, font1, 72, 0, tx + 10, ty, state.t.toFixed(1));
@@ -124,65 +125,68 @@ function displayLoop() {
 
 }
 
-function updateState() {
-    Readings.findAll({limit: 50, order: [['id', 'DESC']]}).done((data, e) => {
-        r1 = data[0];
-        r2 = data[1];
-        r3 = data[2];
-        r4 = data[3];
+async function updateState() {
+    data = await Readings.findAll({limit: 50, order: [['id', 'DESC']]});
+    const r1 = data[0];
+    const r2 = data[1];
+    const r3 = data[2];
+    const r4 = data[3];
 
-        const temperatures = [r1.temperature, r2.temperature, r3.temperature, r4.temperature];
-        let max = Math.max(...temperatures);
-        let min = Math.min(...temperatures);
-        state.t = (temperatures.reduce((sum, x) => sum + x) - min - max) / 2.0;
+    const temperatures = [r1.temperature, r2.temperature, r3.temperature, r4.temperature];
 
-        const humidities = [r1.humidity, r2.humidity, r3.humidity, r4.humidity];
-        max = Math.max(...humidities);
-        min = Math.min(...humidities);
-        state.h = (humidities.reduce((sum, x) => sum + x) - min - max) / 2.0;
-        console.log(state);
-    });
+    let max = Math.max(...temperatures);
+    let min = Math.min(...temperatures);
+    state.t = (temperatures.reduce((sum, x) => sum + x) - min - max) / 2.0;
+
+    const humidities = [r1.humidity, r2.humidity, r3.humidity, r4.humidity];
+    max = Math.max(...humidities);
+    min = Math.min(...humidities);
+    state.h = (humidities.reduce((sum, x) => sum + x) - min - max) / 2.0;
+    console.log(state);
 }
 
 
-function clearDisplay() {
+async function clearDisplay() {
     display.clear(display.colors.black);
     display.clear(display.colors.yellow);
     display.clear();
 }
 
+async function main() {
+    const app = express();
+    app.use(cors());
+    app.use(express.json()); // for parsing application/json
 
-const app = express();
-app.use(cors());
-app.use(express.json()); // for parsing application/json
-
-app.use(express.static(path.join(__dirname, 'public')));
-app.get('/sensors', (req, res) => {
-    Readings.findAll({
-        limit: 1200, order: [['id', 'DESC']]
-    }).then(readings => {
-        res.json(readings.reverse());
+    app.use(express.static(path.join(__dirname, 'public')));
+    app.get('/sensors', (req, res) => {
+        Readings.findAll({
+            limit: 1200, order: [['id', 'DESC']]
+        }).then(readings => {
+            res.json(readings.reverse());
+        });
     });
-});
 
-app.get('/thresholds', (req, res) => {
-    Settings.findAll().then(settings => {
-        return res.json(settings[0]);
+    app.get('/thresholds', (req, res) => {
+        Settings.findAll().then(settings => {
+            return res.json(settings[0]);
+        });
     });
-});
 
-app.post('/thresholds', (req, res, next) => {
-    Settings.findAll().then(settings => settings[0]).then(settings => {
-        settings.update(req.body)
+    app.post('/thresholds', (req, res, next) => {
+        Settings.findAll().then(settings => settings[0]).then(settings => {
+            settings.update(req.body)
+        });
     });
-});
 
-app.listen(3000, () => console.log(`Fridge app listening on port 3000!`));
+    app.listen(3000, () => console.log(`Fridge app listening on port 3000!`));
 
-setInterval(loop, 60000);
-setInterval(displayLoop, 60000);
-setInterval(clearDisplay, 60000 * 60 * 24);
-setInterval(updateState, 60000);
-loop();
-updateState();
-displayLoop();
+    setInterval(loop, 60000);
+    setInterval(displayLoop, 60000);
+    setInterval(clearDisplay, 60000 * 60 * 24);
+    setInterval(updateState, 60000);
+    await updateState();
+    loop();
+    displayLoop();
+}
+
+main();

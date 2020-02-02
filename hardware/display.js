@@ -51,34 +51,25 @@ const READ_VCOM_VALUE = 0x81;
 const VCM_DC_SETTING = 0x82;
 const FLASH_MODE = 0xe5;
 
+//physical
+const RESET_PIN = 11;
+const DC_PIN = 22;
+const BUSY_PIN = 18;
+const CS_PIN = 24;
+
+const EPD_WIDTH = 640;
+const EPD_HEIGHT = 380;
 
 
 module.exports = class Display {
 
     image;
-    EPD_WIDTH = 640;
-    EPD_HEIGHT = 380;
-
-    //BCM
-    // reset_pin = 17;
-    // dc_pin = 25;
-    // busy_pin = 24;
-    // cs_pin = 8;
-
-    //physical
-    reset_pin = 11;
-    dc_pin = 22;
-    busy_pin = 18;
-    cs_pin = 24;
 
     constructor(rpio, height, width) {
-        this.width = width || this.EPD_WIDTH;
-        this.height = height || this.EPD_HEIGHT;
+        this.width = width || EPD_WIDTH;
+        this.height = height || EPD_HEIGHT;
 
         this.image = gd.createSync(this.width, this.height);
-
-        // for (let i = 0; i < 2; i++) this.image.colorAllocate(255 - i * 85, 255 - i * 85, 255 - i * 85);
-        // for (let i = 0; i < 256; i++) this.image.colorAllocate(255 - i , 255 - i , 255 );
 
         this.colors = {
             black: 0,
@@ -91,10 +82,10 @@ module.exports = class Display {
         // for (let i = 0; i < 256; i++) this.image.colorAllocate(255 - i , 255 - i , 255 );
         for (let i = 0; i < 2; i++) this.image.colorAllocate(255 - i * 85, 255 - i * 85, 255 - i * 85);
 
-        this.rpio.open(this.reset_pin, this.rpio.OUTPUT, this.rpio.LOW);
-        this.rpio.open(this.dc_pin, this.rpio.OUTPUT, this.rpio.LOW);
-        this.rpio.open(this.cs_pin, this.rpio.OUTPUT, this.rpio.LOW);
-        this.rpio.open(this.busy_pin, this.rpio.INPUT);
+        this.rpio.open(RESET_PIN, this.rpio.OUTPUT, this.rpio.LOW);
+        this.rpio.open(DC_PIN, this.rpio.OUTPUT, this.rpio.LOW);
+        this.rpio.open(CS_PIN, this.rpio.OUTPUT, this.rpio.LOW);
+        this.rpio.open(BUSY_PIN, this.rpio.INPUT);
 
         this.rpio.spiBegin();
         this.rpio.spiChipSelect(0);
@@ -106,33 +97,34 @@ module.exports = class Display {
     }
 
     reset() {
-        this.rpio.write(this.reset_pin, this.rpio.HIGH);
+        this.rpio.write(RESET_PIN, this.rpio.HIGH);
         this.rpio.msleep(200);
-        this.rpio.write(this.reset_pin, this.rpio.LOW);
+        this.rpio.write(RESET_PIN, this.rpio.LOW);
         this.rpio.msleep(10);
-        this.rpio.write(this.reset_pin, this.rpio.HIGH);
+        this.rpio.write(RESET_PIN, this.rpio.HIGH);
         this.rpio.msleep(200);
     }
 
     send_command(command) {
-        this.rpio.write(this.dc_pin, 0);
-        this.rpio.write(this.cs_pin, 0);
+        this.rpio.write(DC_PIN, 0);
+        this.rpio.write(CS_PIN, 0);
         let buffer = getBuffer(command);
         this.rpio.spiWrite(buffer, buffer.length);
-        this.rpio.write(this.cs_pin, 1);
+        this.rpio.write(CS_PIN, 1);
     };
 
     send_data(data) {
-        this.rpio.write(this.dc_pin, 1);
-        this.rpio.write(this.cs_pin, 0);
+        this.rpio.write(DC_PIN, 1);
+        this.rpio.write(CS_PIN, 0);
         let buffer = getBuffer(data);
         // console.log(data);
         this.rpio.spiWrite(buffer, buffer.length);
-        this.rpio.write(this.cs_pin, 1);
+        this.rpio.write(CS_PIN, 1);
     };
 
     update() {
         console.log("update start");
+        this.wait();
         this.send_command(DATA_START_TRANSMISSION_1);
         let color1, color2, byte;
 
@@ -160,7 +152,7 @@ module.exports = class Display {
     wait() {
         console.log("e-Paper busy");
         if (os.arch() === 'arm') {
-            while (this.rpio.read(this.busy_pin) === 0) {  //    # 0: idle, 1: busy
+            while (this.rpio.read(BUSY_PIN) === 0) {  //    # 0: idle, 1: busy
                 this.rpio.msleep(100);
             }
         }
@@ -212,19 +204,23 @@ module.exports = class Display {
     }
 
     clear(color = this.colors.white) {
-        console.log("clear start");
-        this.send_command(DATA_START_TRANSMISSION_1);
-        for (let y = 0; y < this.height; y++) {
-            for (let x = 0; x < this.width; x += 2) {
-                this.send_data(color << 4 | color);
+        return new Promise(resolve => {
+            console.log("clear start");
+            this.wait();
+            this.send_command(DATA_START_TRANSMISSION_1);
+            for (let y = 0; y < this.height; y++) {
+                for (let x = 0; x < this.width; x += 2) {
+                    this.send_data(color << 4 | color);
+                }
             }
-        }
-        this.send_command(POWER_ON);// # POWER ON
-        this.wait();
-        this.send_command(DISPLAY_REFRESH);// # display refresh
-        this.rpio.msleep(100);
-        this.wait();
-        console.log("clear end");
+            this.send_command(POWER_ON);// # POWER ON
+            this.wait();
+            this.send_command(DISPLAY_REFRESH);// # display refresh
+            this.rpio.msleep(100);
+            this.wait();
+            console.log("clear end");
+            resolve();
+        });
     }
 
     stand_by() {

@@ -148,16 +148,16 @@ async function displayLoop() {
         y0h = H_ZERO_Y - state.h_data[i];
         y1h = H_ZERO_Y - state.h_data[i + 1];
 
-        y0t = T_ZERO_Y - state.t_data[i]*5;
-        y1t = T_ZERO_Y - state.t_data[i + 1]*5;
+        y0t = T_ZERO_Y - state.t_data[i] * 5;
+        y1t = T_ZERO_Y - state.t_data[i + 1] * 5;
 
         x0 = ZERO_X + i * STEP_X;
         x1 = ZERO_X + (i + 1) * STEP_X;
         display.image.line(x0, Math.round(y0h), x1, Math.round(y1h), display.colors.black);
-        display.image.line(x0+1, Math.round(y0h), x1+1, Math.round(y1h), display.colors.black);
+        display.image.line(x0 + 1, Math.round(y0h), x1 + 1, Math.round(y1h), display.colors.black);
 
         display.image.line(x0, Math.round(y0t), x1, Math.round(y1t), display.colors.black);
-        display.image.line(x0+1, Math.round(y0t), x1+1, Math.round(y1t), display.colors.black);
+        display.image.line(x0 + 1, Math.round(y0t), x1 + 1, Math.round(y1t), display.colors.black);
     }
 
 
@@ -176,7 +176,7 @@ async function updateState() {
     const h_data = [];
     data.map(t => {
         t_data.push(t.temperature);
-        h_data.push(t.humidity * 100)
+        h_data.push(t.humidity)
     });
 
     console.log(t_data);

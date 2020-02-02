@@ -124,6 +124,7 @@ module.exports = class Display {
 
     update() {
         console.log("update start");
+        // this.normalize();
         this.wait();
         this.send_command(DATA_START_TRANSMISSION_1);
         let color1, color2, byte;
@@ -234,6 +235,16 @@ module.exports = class Display {
             // this.rpio.spiEnd();
             resolve();
         });
+    }
+
+    addImage(newImage, x0, y0, bgColor, fgColor) {
+        for (let i = 0; i < newImage.height; i++) {
+            for (let j = 0; j < newImage.width; j++) {
+                if (newImage.getPixel(j, i) !== bgColor) {
+                    this.image.setPixel(x0 + j, y0 + i, fgColor);
+                }
+            }
+        }
     }
 };
 

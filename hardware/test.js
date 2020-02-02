@@ -45,6 +45,16 @@ function updateState() {
 
 updateState();
 
+function dump(image, x1 = 0, y1 = 0, x2 = image.width, y2 = image.height) {
+    for (let i = y1; i < y2; i++) {
+        let str = [];
+        for (let j = x1; j < x2; j++) {
+            str.push(image.getPixel(j, i));
+        }
+        console.log(str);
+    }
+}
+
 display.clear();
 console.log(state);
 font1 = './Kanit-ExtraBold.ttf';
@@ -67,24 +77,26 @@ display.image.stringFT(display.colors.white, font2, 20, 0, tx + 12, ty - 72, "hu
 
 display.image.line(10, 340, 400, 340, display.colors.black);
 display.image.line(10, 341, 400, 341, display.colors.black);
+display.image.line(10, 342, 400, 342, display.colors.black);
 
 let fan, flake;
 if (state.fanOn) {
     fan = gd.openFile('./fan-solid.gif');
-    fan.copy(display.image, tx + 30, ty - 200, 0, 0, 64, 64);
+    display.addImage(fan, tx + 30, ty - 200, 2, display.colors.white);
 } else {
     display.image.filledRectangle(tx + 30, ty - 200, tx + 30 + 64, ty - 200 + 64, display.colors.yellow);
 }
 
 if (state.coolingOn) {
     flake = gd.openFile('./snowflake.gif');
-    flake.copy(display.image, tx + 120, ty - 200, 0, 0, 56, 64);
+    display.addImage(flake, tx + 120, ty - 200, 2, display.colors.white);
 } else {
     display.image.filledRectangle(tx + 120, ty - 200, tx + 120 + 56, ty - 200 + 64, display.colors.yellow);
 }
 
-
-display.update();
+dump(display.image, tx + 30, ty - 200, tx + 30 + 64, ty - 200 + 64);
+// display.update();
+// dump(display.image, tx + 30, ty - 200, tx + 30 + 64, ty - 200 + 64);
 
 display.image.savePng('output.png', 1);
 console.log(display.image);

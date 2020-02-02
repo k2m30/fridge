@@ -127,7 +127,7 @@ async function displayLoop() {
     let tx = 422;
     let ty = 110;
 
-    display.image.filledRectangle(tx, 0, display.width, display.height, display.colors.yellow);
+    display.image.filledRectangle(tx, 0, display.width, display.height, display.colors.black);
     display.image.stringFT(display.colors.white, font1, 72, 0, tx + 10, ty, state.t.toFixed(1));
     display.image.stringFT(display.colors.white, font2, 28, 0, tx + 175, ty - 45, "°C");
     display.image.stringFT(display.colors.white, font2, 20, 0, tx + 12, ty - 72, "temperature");
@@ -143,14 +143,14 @@ async function displayLoop() {
         fan = gd.openFile('./fan-solid.gif');
         display.addImage(fan, tx + 30, ty - 200, 2, display.colors.white);
     } else {
-        display.image.filledRectangle(tx + 30, ty - 200, tx + 30 + 64, ty - 200 + 64, display.colors.yellow);
+        display.image.filledRectangle(tx + 30, ty - 200, tx + 30 + 64, ty - 200 + 64, display.colors.black);
     }
 
     if (state.coolingOn) {
         flake = gd.openFile('./snowflake.gif');
         display.addImage(flake, tx + 120, ty - 200, 2, display.colors.white);
     } else {
-        display.image.filledRectangle(tx + 120, ty - 200, tx + 120 + 56, ty - 200 + 64, display.colors.yellow);
+        display.image.filledRectangle(tx + 120, ty - 200, tx + 120 + 56, ty - 200 + 64, display.colors.black);
     }
 
     for (let i = 0; i < DATA_DEEP - 1; i++) {
@@ -180,24 +180,24 @@ async function displayLoop() {
     display.image.line(ZERO_X + 1, H_ZERO_Y, ZERO_X + 1, H_ZERO_Y - 100, display.colors.black);
 
     //limits
-    display.image.line(ZERO_X, T_ZERO_Y - state.tLow * 8, END_X, T_ZERO_Y - state.tLow * 8, display.colors.yellow);
-    display.image.line(ZERO_X, T_ZERO_Y + 1 - state.tLow * 8, END_X, T_ZERO_Y + 1 - state.tLow * 8, display.colors.yellow);
+    display.image.line(ZERO_X, T_ZERO_Y - state.tLow * 8, END_X, T_ZERO_Y - state.tLow * 8, display.colors.black);
+    display.image.line(ZERO_X, T_ZERO_Y + 1 - state.tLow * 8, END_X, T_ZERO_Y + 1 - state.tLow * 8, display.colors.black);
 
-    display.image.line(ZERO_X, T_ZERO_Y - state.tHigh * 8, END_X, T_ZERO_Y - state.tHigh * 8, display.colors.yellow);
-    display.image.line(ZERO_X, T_ZERO_Y + 1 - state.tHigh * 8, END_X, T_ZERO_Y + 1 - state.tHigh * 8, display.colors.yellow);
+    display.image.line(ZERO_X, T_ZERO_Y - state.tHigh * 8, END_X, T_ZERO_Y - state.tHigh * 8, display.colors.black);
+    display.image.line(ZERO_X, T_ZERO_Y + 1 - state.tHigh * 8, END_X, T_ZERO_Y + 1 - state.tHigh * 8, display.colors.black);
 
     //limits
-    display.image.line(ZERO_X, H_ZERO_Y - state.hLow, END_X, H_ZERO_Y - state.hLow, display.colors.yellow);
-    display.image.line(ZERO_X, H_ZERO_Y + 1 - state.hLow, END_X, H_ZERO_Y + 1 - state.hLow, display.colors.yellow);
+    display.image.line(ZERO_X, H_ZERO_Y - state.hLow, END_X, H_ZERO_Y - state.hLow, display.colors.black);
+    display.image.line(ZERO_X, H_ZERO_Y + 1 - state.hLow, END_X, H_ZERO_Y + 1 - state.hLow, display.colors.black);
 
-    display.image.line(ZERO_X, H_ZERO_Y - state.hHigh, END_X, H_ZERO_Y - state.hHigh, display.colors.yellow);
-    display.image.line(ZERO_X, H_ZERO_Y + 1 - state.hHigh, END_X, H_ZERO_Y + 1 - state.hHigh, display.colors.yellow);
+    display.image.line(ZERO_X, H_ZERO_Y - state.hHigh, END_X, H_ZERO_Y - state.hHigh, display.colors.black);
+    display.image.line(ZERO_X, H_ZERO_Y + 1 - state.hHigh, END_X, H_ZERO_Y + 1 - state.hHigh, display.colors.black);
 
-    display.image.stringFT(display.colors.yellow, font2, 12, 0, ZERO_X + 4, H_ZERO_Y - state.hHigh - 4, state.hHigh.toFixed(0) + '%');
-    display.image.stringFT(display.colors.yellow, font2, 12, 0, ZERO_X + 4, H_ZERO_Y - state.hLow + 14, state.hLow.toFixed(0) + '%');
+    display.image.stringFT(display.colors.black, font2, 12, 0, ZERO_X + 4, H_ZERO_Y - state.hHigh - 4, state.hHigh.toFixed(0) + '%');
+    display.image.stringFT(display.colors.black, font2, 12, 0, ZERO_X + 4, H_ZERO_Y - state.hLow + 14, state.hLow.toFixed(0) + '%');
 
-    display.image.stringFT(display.colors.yellow, font2, 12, 0, ZERO_X + 4, T_ZERO_Y - state.tHigh * 8 - 4, state.tHigh.toFixed(0) + '°C');
-    display.image.stringFT(display.colors.yellow, font2, 12, 0, ZERO_X + 4, T_ZERO_Y - state.tLow * 8 + 14, state.tLow.toFixed(0) + '°C');
+    display.image.stringFT(display.colors.black, font2, 12, 0, ZERO_X + 4, T_ZERO_Y - state.tHigh * 8 - 4, state.tHigh.toFixed(0) + '°C');
+    display.image.stringFT(display.colors.black, font2, 12, 0, ZERO_X + 4, T_ZERO_Y - state.tLow * 8 + 14, state.tLow.toFixed(0) + '°C');
 
     display.update();
 

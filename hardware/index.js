@@ -108,10 +108,6 @@ async function loop() {
     await Readings.create(await readBME280(sensor_2));
     await Readings.create(await readBME280(sensor_3));
     await Readings.create(await readBME280(sensor_4));
-
-    await turnCoolingIfNeeded();
-    await turnSonicIfNeeded();
-    await turnFanIfNeeded();
 }
 
 async function displayLoop() {
@@ -219,6 +215,10 @@ async function updateState() {
     state.tFrost = data[0].temperature;
     state.t = (data[1].temperature + data[2].temperature + data[3].temperature) / 3.0;
     state.h = (data[1].humidity + data[2].humidity + data[3].humidity) / 3.0;
+
+    await turnCoolingIfNeeded();
+    await turnSonicIfNeeded();
+    await turnFanIfNeeded();
     console.log(state);
 }
 

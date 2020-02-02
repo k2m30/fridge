@@ -74,12 +74,14 @@ async function turnCoolingIfNeeded() {
 
 async function readBME280(device) {
     device.getDataFromDeviceSync();
-    return {
+    const measurement = {
         sensorID: device.device.bus,
         temperature: device.device.parameters[1].value,
         pressure: device.device.parameters[0].value,
         humidity: device.device.parameters[2].value
     };
+    console.log(measurement);
+    return measurement;
 }
 
 

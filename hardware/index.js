@@ -91,18 +91,15 @@ async function turnSonicIfNeeded() {
 }
 
 async function turnFanIfNeeded() {
-    Settings.findAll().then(settings => settings[0]).then(s => {
-        if (state.h > s.hHigh) {
-            rpio.write(FAN_PIN, rpio.LOW);
-            state.fanOn = false;
-        }
+    if (state.tFrost > 7.0) {
+        rpio.write(FAN_PIN, rpio.LOW);
+        state.fanOn = false;
+    }
 
-        if (state.h < s.hLow) {
-            rpio.write(FAN_PIN, rpio.HIGH);
-            state.fanOn = true;
-        }
-    });
-
+    if (state.tFrost < 4.0) {
+        rpio.write(FAN_PIN, rpio.HIGH);
+        state.fanOn = true;
+    }
 }
 
 async function loop() {
@@ -221,7 +218,7 @@ async function updateState() {
     state.hHigh = Math.round(settings[0].hHigh);
     state.tFrost = data[0].temperature;
     state.t = (data[1].temperature + data[2].temperature + data[3].temperature) / 3.0;
-    state.h = (data[1].humidity + data[2].humidity + data[3].humidity) / 3.0
+    state.h = (data[1].humidity + data[2].humidity + data[3].humidity) / 3.0;
     console.log(state);
 }
 

@@ -21,30 +21,30 @@ let state = {
     h: 54.431,
     coolingOn: true,
     fanOn: true,
-    h_data: [],
-    t_data: []
+    hData: [],
+    tData: []
 };
 
 
 async function updateState() {
-    const data = await Readings.findAll({limit: DATA_DEEP, order: [['id', 'DESC']]});
+    const data = await Readings.findAll({limit: DATA_DEEP * 4, order: [['id', 'DESC']]});
     const r1 = data[0];
     const r2 = data[1];
     const r3 = data[2];
     const r4 = data[3];
 
-    t_data = [];
-    h_data = [];
+    tData = [];
+    hData = [];
     data.map(t => {
-        t_data.push(t.temperature);
-        h_data.push(t.humidity * 100)
+        tData.push(t.temperature);
+        hData.push(t.humidity * 100)
     });
 
-    console.log(t_data);
-    console.log(h_data);
+    console.log(tData);
+    console.log(hData);
 
-    state.h_data = h_data.reverse();
-    state.t_data = t_data.reverse();
+    state.hData = hData.reverse();
+    state.tData = tData.reverse();
 
 
     const temperatures = [r1.temperature, r2.temperature, r3.temperature, r4.temperature];
@@ -119,19 +119,19 @@ async function main() {
     T_ZERO_Y = 220;
 
     for (let i = 0; i < DATA_DEEP - 1; i++) {
-        y0h = H_ZERO_Y - state.h_data[i];
-        y1h = H_ZERO_Y - state.h_data[i + 1];
+        y0h = H_ZERO_Y - state.hData[i];
+        y1h = H_ZERO_Y - state.hData[i + 1];
 
-        y0t = T_ZERO_Y - state.t_data[i]*5;
-        y1t = T_ZERO_Y - state.t_data[i + 1]*5;
+        y0t = T_ZERO_Y - state.tData[i] * 5;
+        y1t = T_ZERO_Y - state.tData[i + 1] * 5;
 
         x0 = ZERO_X + i * STEP_X;
         x1 = ZERO_X + (i + 1) * STEP_X;
         display.image.line(x0, Math.round(y0h), x1, Math.round(y1h), display.colors.black);
-        display.image.line(x0+1, Math.round(y0h), x1+1, Math.round(y1h), display.colors.black);
+        display.image.line(x0 + 1, Math.round(y0h), x1 + 1, Math.round(y1h), display.colors.black);
 
         display.image.line(x0, Math.round(y0t), x1, Math.round(y1t), display.colors.black);
-        display.image.line(x0+1, Math.round(y0t), x1+1, Math.round(y1t), display.colors.black);
+        display.image.line(x0 + 1, Math.round(y0t), x1 + 1, Math.round(y1t), display.colors.black);
     }
 
 

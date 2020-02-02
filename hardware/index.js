@@ -53,8 +53,9 @@ let state = {
     tLow: 0,
     hHigh: 0,
     hLow: 0,
-    h_data: [],
-    t_data: []
+    hData: [],
+    tData: [],
+    tFrost: 0
 };
 
 async function turnCoolingIfNeeded() {
@@ -151,11 +152,11 @@ async function displayLoop() {
     }
 
     for (let i = 0; i < DATA_DEEP - 1; i++) {
-        const y0h = H_ZERO_Y - state.h_data[i];
-        const y1h = H_ZERO_Y - state.h_data[i + 1];
+        const y0h = H_ZERO_Y - state.hData[i];
+        const y1h = H_ZERO_Y - state.hData[i + 1];
 
-        const y0t = T_ZERO_Y - state.t_data[i] * 5;
-        const y1t = T_ZERO_Y - state.t_data[i + 1] * 5;
+        const y0t = T_ZERO_Y - state.tData[i] * 5;
+        const y1t = T_ZERO_Y - state.tData[i + 1] * 5;
 
         const x0 = ZERO_X + i * STEP_X;
         const x1 = ZERO_X + (i + 1) * STEP_X;
@@ -196,41 +197,31 @@ async function displayLoop() {
 }
 
 async function updateState() {
-    const data = await Readings.findAll({limit: 50, order: [['id', 'DESC']]});
-    const r1 = data[0];
-    const r2 = data[1];
-    const r3 = data[2];
-    const r4 = data[3];
+    const data = await Readings.findAll({limit: DATA_DEEP * 4, order: [['id', 'DESC']]});
+    const tData = [];
+    const hData = [];
 
-    const t_data = [];
-    const h_data = [];
-    data.map(t => {
-        t_data.push(t.temperature);
-        h_data.push(t.humidity)
-    });
+    for (let i = 0; i < DATA_DEEP * 4; i += 4) {
+        console.log(data[0].temperature);
+        tData.push((data[i + 1].temperature + data[i + 2].temperature + data[i + 3].temperature) / 3.0);
+        hData.push((data[i + 1].humidity + data[i + 2].humidity + data[i + 3].humidity) / 3.0);
+    }
 
-    settings = await Settings.findAll();
+    state.hData = hData.reverse();
+    state.tData = tData.reverse();
+
+    console.log(tData);
+    console.log(hData);
+
+    const settings = await Settings.findAll();
     state.tLow = Math.round(settings[0].tLow);
     state.tHigh = Math.round(settings[0].tHigh);
     state.hLow = Math.round(settings[0].hLow);
+
     state.hHigh = Math.round(settings[0].hHigh);
-
-    console.log(t_data);
-    console.log(h_data);
-
-    state.h_data = h_data.reverse();
-    state.t_data = t_data.reverse();
-
-    const temperatures = [r1.temperature, r2.temperature, r3.temperature, r4.temperature];
-
-    let max = Math.max(...temperatures);
-    let min = Math.min(...temperatures);
-    state.t = (temperatures.reduce((sum, x) => sum + x) - min - max) / 2.0;
-
-    const humidities = [r1.humidity, r2.humidity, r3.humidity, r4.humidity];
-    max = Math.max(...humidities);
-    min = Math.min(...humidities);
-    state.h = (humidities.reduce((sum, x) => sum + x) - min - max) / 2.0;
+    state.tFrost = data[0].temperature;
+    state.t = (data[1].temperature + data[2].temperature + data[3].temperature) / 3.0;
+    state.h = (data[1].humidity + data[2].humidity + data[3].humidity) / 3.0
     console.log(state);
 }
 

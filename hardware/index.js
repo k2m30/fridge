@@ -246,7 +246,6 @@ async function clearDisplay() {
     display.clear(display.colors.yellow);
     display.clear();
 }
-
 async function main() {
     const app = express();
     app.use(cors());

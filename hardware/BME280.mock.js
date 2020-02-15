@@ -24,11 +24,58 @@ module.exports = class BME280 {
         // this.bus = i2c.openSync(this.device.bus);
     }
 
-    getDataFromDeviceSync() {
+    deviceBus() {
+        return this.device.bus;
+    }
+
+    deviceName() {
+        return this.device.name;
+    }
+
+    deviceType() {
+        return this.device.type;
+    }
+
+    deviceVersion() {
+        return this.device.version;
+    }
+
+    deviceNumValues() {
+        return this.device.parameters.length;
+    }
+
+    typeAtIndex(idx) {
+        return this.device.parameters[idx].type;
+    }
+
+    nameAtIndex(idx) {
+        return this.device.parameters[idx].name;
+    }
+
+    valueSavedAtIndex(idx) {
+        return this.device.parameters[idx].value;
+    }
+
+    deviceActive() {
+        return this.device.active;
+    }
+
+    randomizeParamValues = () => {
         let min = -5.0, max = 4.0;
         this.device.parameters[0].value = 965.0 + Math.floor(Math.random() * (max - min + 1) + min);
         this.device.parameters[1].value = 22.4 + Math.floor(Math.random() * (max - min + 1) + min);
         this.device.parameters[2].value = 0.78 + Math.floor(Math.random() * (max - min + 1) / 100 + min / 100);
+    };
+
+    getDataFromDevice(callback) {
+        this.randomizeParamValues();
+        setTimeout( ()=> {
+            callback();
+        }, 3+Math.random()*10);
+    }
+
+    getDataFromDeviceSync() {
+        this.randomizeParamValues();
         return true;
     }
 };

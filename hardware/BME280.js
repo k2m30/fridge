@@ -125,6 +125,10 @@ module.exports = class BME280 {
         }
     }
 
+    deviceBus() {
+        return this.device.bus;
+    }
+
     deviceName() {
         return this.device.name;
     }
@@ -147,6 +151,10 @@ module.exports = class BME280 {
 
     nameAtIndex(idx) {
         return this.device.parameters[idx].name;
+    }
+
+    valueSavedAtIndex(idx) {
+        return this.device.parameters[idx].value;
     }
 
     deviceActive() {

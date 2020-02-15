@@ -78,17 +78,28 @@ async function turnCoolingIfNeeded() {
     });
 }
 
-async function readBME280(device) {
-    device.getDataFromDeviceSync();
-    const measurement = {
-        sensorID: device.device.bus,
-        temperature: device.device.parameters[1].value,
-        pressure: device.device.parameters[0].value,
-        humidity: device.device.parameters[2].value
-    };
-    console.log(measurement);
-    return measurement;
-}
+readBME280 = async (device) => {
+
+    return new Promise((resolve, reject) => {
+        device.getDataFromDevice( (err) => {
+            if (err) {
+                console.log("*** ERROR reading from device : " , device);
+                reject(err);
+            } else {
+
+                const measurement = {
+                    sensorID: device.deviceBus(),
+                    pressure: device.valueSavedAtIndex(0),
+                    temperature: device.valueSavedAtIndex(1),
+                    humidity: device.valueSavedAtIndex(2),
+                };
+                console.log( "Read data from device :" , measurement);
+                resolve(measurement);
+            }
+        });
+    });
+    //device.getDataFromDeviceSync();
+};
 
 
 async function turnSonicIfNeeded() {
@@ -120,11 +131,23 @@ async function turnFanIfNeeded() {
 }
 
 async function loop() {
-    // console.log(readBME280(sensor_1));
-    await Readings.create(await readBME280(sensor_1));
-    await Readings.create(await readBME280(sensor_2));
-    await Readings.create(await readBME280(sensor_3));
-    await Readings.create(await readBME280(sensor_4));
+
+    console.log(" == Start read sensors == ");
+    let n = Date.now();
+
+    let sens1 = await readBME280(sensor_1).catch( (err) => {console.log(err)} );
+    sens1 && await Readings.create(sens1);
+
+    let sens2 = await readBME280(sensor_2).catch( (err) => {console.log(err)} );
+    sens2 && await Readings.create(sens2);
+
+    let sens3 = await readBME280(sensor_3).catch( (err) => {console.log(err)} );
+    sens3 && await Readings.create(sens3);
+
+    let sens4 = await readBME280(sensor_4).catch( (err) => {console.log(err)} );
+    sens4 && await Readings.create(sens4);
+
+    console.log(" == END read sensors : ", Date.now()-n );
 }
 
 async function displayLoop() {

@@ -14,7 +14,16 @@ device ip – 192.168.128.95
 
 ### No autostart at the moment 
 
-`cd hardware && npm start`
+add to /etc/rc.local
+
+```
+sudo -b nodemon --cwd /home/pi/fridge/hardware /home/pi/fridge/hardware/index.js >/home/pi/fridge/hardware.log 2>&1
+serve -s /home/pi/fridge/frontend/build -l 3001
+```
+
+### manual run
+
+`cd hardware && sudo npm start`
 
 in other terminal
 

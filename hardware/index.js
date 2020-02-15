@@ -98,7 +98,7 @@ readBME280 = async (device) => {
             }
         });
     });
-    //device.getDataFromDeviceSync();
+
 };
 
 

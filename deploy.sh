@@ -1,1 +1,1 @@
-git push && ssh pi@fridge.local 'cd fridge && git pull'
+git push && ssh mxc_fridge_l 'cd fridge && git pull'

@@ -166,7 +166,7 @@ module.exports = class BME280 {
             callback(`BME280 Error: index ${idx} out of range`, null);
         }
 
-        // no need to fetch all parameters from the device every single time someone
+            // no need to fetch all parameters from the device every single time someone
         // wants to access a single value.  So check to see if the data is stale...
         else if (this.isStale) {
             this.getDataFromDevice((err) => {
@@ -193,31 +193,31 @@ module.exports = class BME280 {
         return this.device.parameters[idx].value;
     }
 
-    getDataFromDevice(callback) {
-        if (!this.device.active) {
-            callback("Device not active");
-            return;
-        }
-
-        // the device is sleeping if it is in either sleep or forced mode, so we need
-        // to wake it up before a measurement is taken by selecting forced mode
-        if ((this.device.mode === 'sleep') || (this.device.mode === 'forced')) {
-            this.setMode('forced');
-        }
-
-        // read the entire data block at once and pry out the values as we need them
-        this.bus.readI2cBlock(this.device.addr, this.register.PRESSUREDATA, 8, new Buffer.alloc(8), (err, bytesRead, buffer) => {
-
-            if (err) {
-                callback(err);
-            } else {
-                this.setTemperature(BME280.uint20(buffer[3], buffer[4], buffer[5]));
-                this.setPressure(BME280.uint20(buffer[0], buffer[1], buffer[2]));
-                this.setHumidity(BME280.uint16(buffer[6], buffer[7]));
-                callback();
+    getDataFromDevice = async () => {
+        return new Promise((resolve, reject) => {
+            if (!this.device.active) {
+                reject("Device not active");
             }
+
+            // the device is sleeping if it is in either sleep or forced mode, so we need
+            // to wake it up before a measurement is taken by selecting forced mode
+            if ((this.device.mode === 'sleep') || (this.device.mode === 'forced')) {
+                this.setMode('forced');
+            }
+
+            // read the entire data block at once and pry out the values as we need them
+            this.bus.readI2cBlock(this.device.addr, this.register.PRESSUREDATA, 8, new Buffer.alloc(8), (err, bytesRead, buffer) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    this.setTemperature(BME280.uint20(buffer[3], buffer[4], buffer[5]));
+                    this.setPressure(BME280.uint20(buffer[0], buffer[1], buffer[2]));
+                    this.setHumidity(BME280.uint16(buffer[6], buffer[7]));
+                    resolve(this);
+                }
+            });
         });
-    }
+    };
 
     getDataFromDeviceSync() {
         if (!this.device.active) {

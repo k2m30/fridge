@@ -79,26 +79,15 @@ async function turnCoolingIfNeeded() {
 }
 
 readBME280 = async (device) => {
-
-    return new Promise((resolve, reject) => {
-        device.getDataFromDevice( (err) => {
-            if (err) {
-                console.log("*** ERROR reading from device : " , device);
-                reject(err);
-            } else {
-
-                const measurement = {
-                    sensorID: device.deviceBus(),
-                    pressure: device.valueSavedAtIndex(0),
-                    temperature: device.valueSavedAtIndex(1),
-                    humidity: device.valueSavedAtIndex(2),
-                };
-                console.log( "Read data from device :" , measurement);
-                resolve(measurement);
-            }
-        });
-    });
-
+    await device.getDataFromDevice();
+    const measurement = {
+        sensorID: device.deviceBus(),
+        pressure: device.valueSavedAtIndex(0),
+        temperature: device.valueSavedAtIndex(1),
+        humidity: device.valueSavedAtIndex(2),
+    };
+    console.log("Read data from device :", measurement);
+    return measurement;
 };
 
 
@@ -110,7 +99,7 @@ const fanOn = (on = true) => {
 
     rpio.write(FAN_PIN, on ? rpio.HIGH : rpio.LOW);
     state.fanOn = on;
-    console.log("Fan is " , ( on ? "on" : "off") );
+    console.log("Fan is ", (on ? "on" : "off"));
 
 };
 
@@ -119,11 +108,11 @@ async function turnFanIfNeeded() {
     if (state.coolingOn) {
         fanOn(true);
     } else {
-        if ( Math.abs(state.t - state.tFrost) > T_DIFF_HIGH_FAN_ON) {
+        if (Math.abs(state.t - state.tFrost) > T_DIFF_HIGH_FAN_ON) {
             fanOn(true);
         }
 
-        if ( Math.abs(state.t - state.tFrost) < T_DIFF_LOW_FAN_OFF) {
+        if (Math.abs(state.t - state.tFrost) < T_DIFF_LOW_FAN_OFF) {
             fanOn(false);
         }
     }
@@ -135,19 +124,27 @@ async function loop() {
     console.log(" == Start read sensors == ");
     let n = Date.now();
 
-    let sens1 = await readBME280(sensor_1).catch( (err) => {console.log(err)} );
+    let sens1 = await readBME280(sensor_1).catch((err) => {
+        console.log(err)
+    });
     sens1 && await Readings.create(sens1);
 
-    let sens2 = await readBME280(sensor_2).catch( (err) => {console.log(err)} );
+    let sens2 = await readBME280(sensor_2).catch((err) => {
+        console.log(err)
+    });
     sens2 && await Readings.create(sens2);
 
-    let sens3 = await readBME280(sensor_3).catch( (err) => {console.log(err)} );
+    let sens3 = await readBME280(sensor_3).catch((err) => {
+        console.log(err)
+    });
     sens3 && await Readings.create(sens3);
 
-    let sens4 = await readBME280(sensor_4).catch( (err) => {console.log(err)} );
+    let sens4 = await readBME280(sensor_4).catch((err) => {
+        console.log(err)
+    });
     sens4 && await Readings.create(sens4);
 
-    console.log(" == END read sensors : ", Date.now()-n );
+    console.log(" == END read sensors : ", Date.now() - n);
 }
 
 async function displayLoop() {
@@ -283,6 +280,7 @@ async function clearDisplay() {
     display.clear(display.colors.yellow);
     display.clear();
 }
+
 async function main() {
     const app = express();
     app.use(cors());

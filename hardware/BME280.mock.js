@@ -67,11 +67,13 @@ module.exports = class BME280 {
         this.device.parameters[2].value = 0.78 + Math.floor(Math.random() * (max - min + 1) / 100 + min / 100);
     };
 
-    getDataFromDevice(callback) {
-        this.randomizeParamValues();
-        setTimeout( ()=> {
-            callback();
-        }, 3+Math.random()*10);
+    getDataFromDevice() {
+        return new Promise((resolve, reject) => {
+            this.randomizeParamValues();
+            setTimeout(() => {
+                resolve();
+            }, 3 + Math.random() * 10);
+        });
     }
 
     getDataFromDeviceSync() {

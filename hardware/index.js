@@ -50,6 +50,16 @@ const sensor_4 = new Sensor({bus: 1});
 let state = {
     t: 0,
     h: 0,
+    t_0: 0,
+    t_1: 0,
+    t_2: 0,
+    t_3: 0,
+    tFrost: 0,
+    h_0: 0,
+    h_1: 0,
+    h_2: 0,
+    h_3: 0,
+
     coolingOn: false,
     fanOn: false,
     tHigh: 0,
@@ -57,9 +67,17 @@ let state = {
     hHigh: 0,
     hLow: 0,
     hData: [],
-    tData: [],
-    tFrost: 0
+    tData: []
 };
+
+const getState = () => {
+
+};
+
+const setState = () => {
+
+};
+
 
 async function turnCoolingIfNeeded() {
     Settings.findAll().then(settings => settings[0]).then(s => {

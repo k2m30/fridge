@@ -70,6 +70,11 @@ function dump(image, x1 = 0, y1 = 0, x2 = image.width, y2 = image.height) {
     }
 }
 
+for (let i = 0; i < 10; i++) {
+    display.clear(display.colors.yellow);
+    display.clear(display.colors.black);
+    display.clear(display.colors.white);
+}
 async function main() {
     await updateState();
 

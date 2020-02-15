@@ -170,11 +170,11 @@ async function displayLoop() {
 
         const x0 = ZERO_X + i * STEP_X;
         const x1 = ZERO_X + (i + 1) * STEP_X;
-        display.image.line(x0, Math.round(y0h), x1, Math.round(y1h), display.colors.black);
-        display.image.line(x0 + 1, Math.round(y0h), x1 + 1, Math.round(y1h), display.colors.black);
+        await display.image.line(x0, Math.round(y0h), x1, Math.round(y1h), display.colors.black);
+        await display.image.line(x0 + 1, Math.round(y0h), x1 + 1, Math.round(y1h), display.colors.black);
 
-        display.image.line(x0, Math.round(y0t), x1, Math.round(y1t), display.colors.black);
-        display.image.line(x0 + 1, Math.round(y0t), x1 + 1, Math.round(y1t), display.colors.black);
+        await display.image.line(x0, Math.round(y0t), x1, Math.round(y1t), display.colors.black);
+        await display.image.line(x0 + 1, Math.round(y0t), x1 + 1, Math.round(y1t), display.colors.black);
     }
     //axis
     display.image.line(ZERO_X, T_ZERO_Y, END_X, T_ZERO_Y, display.colors.black);
@@ -227,8 +227,8 @@ async function updateState() {
         let h = (data[i].humidity + data[i + 1].humidity + data[i + 2].humidity) / 3.0;
         h = Math.round(h * 100) / 100;
 
-        tData.push();
-        hData.push();
+        tData.push(t);
+        hData.push(h);
     }
 
     state.hData = hData.reverse();

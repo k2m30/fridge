@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const hw = require('./hardware');
 const db = require('./db');
 const gd = require('node-gd');
@@ -47,9 +49,15 @@ const sensor_2 = new Sensor({bus: 5});
 const sensor_3 = new Sensor({bus: 3});
 const sensor_4 = new Sensor({bus: 1});
 
+
+
 let state = {
     t: 0,
     h: 0,
+    s_0: undefined,
+    s_1: undefined,
+    s_2: undefined,
+    s_3: undefined,
     t_0: 0,
     t_1: 0,
     t_2: 0,
@@ -67,15 +75,49 @@ let state = {
     hHigh: 0,
     hLow: 0,
     hData: [],
-    tData: []
+    tData: [],
+    kek: 0,
 };
 
+//this only way to get state
 const getState = () => {
-
+    return _.cloneDeep(state);
 };
 
-const setState = () => {
+let stateChanges = [];
+let shouldCommitState = false;
 
+//this only way to change state
+const setState = (stateChange) => {
+    stateChanges.push(stateChange);
+    if (!shouldCommitState) {
+        shouldCommitState = true;
+        process.nextTick(stateCommit);
+    }
+};
+
+//do not change state in this func
+const onStateStateChange = (oldState, newState, stateChanges) => {
+    console.log('diff='+JSON.stringify(stateChanges));
+};
+
+//this will commit all state changes;
+const stateCommit = () => {
+
+    const oldState = state;
+
+    let allStateChanges = {};
+    stateChanges.forEach((change) => {
+       allStateChanges = {...allStateChanges, ...change};
+    });
+    stateChanges = [];
+
+    const newState = {...state, ...allStateChanges};
+
+    onStateStateChange(oldState,newState,allStateChanges);
+
+    state = newState;
+    shouldCommitState = false;
 };
 
 
@@ -96,7 +138,7 @@ async function turnCoolingIfNeeded() {
     });
 }
 
-readBME280 = async (device) => {
+const readBME280 = async (device) => {
     await device.getDataFromDevice();
     const measurement = {
         sensorID: device.deviceBus(),
@@ -121,7 +163,7 @@ const fanOn = (on = true) => {
 
 };
 
-async function turnFanIfNeeded() {
+const turnFanIfNeeded = async = () => {
 
     if (state.coolingOn) {
         fanOn(true);
@@ -135,7 +177,7 @@ async function turnFanIfNeeded() {
         }
     }
 
-}
+};
 
 async function loop() {
 
@@ -335,6 +377,9 @@ async function main() {
     await updateState();
     await loop();
     await displayLoop();
+
 }
+
+
 
 main();

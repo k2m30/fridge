@@ -51,7 +51,7 @@ const sensor_4 = new Sensor({bus: 1});
 
 
 
-let state = {
+let __state = {
     t: 0,
     h: 0,
     s_0: undefined,
@@ -79,15 +79,15 @@ let state = {
     kek: 0,
 };
 
-//this only way to get state
+//this only way to get __state
 const getState = () => {
-    return _.cloneDeep(state);
+    return _.cloneDeep(__state);
 };
 
 let stateChanges = [];
 let shouldCommitState = false;
 
-//this only way to change state
+//this only way to change __state
 const setState = (stateChange) => {
     stateChanges.push(stateChange);
     if (!shouldCommitState) {
@@ -96,15 +96,15 @@ const setState = (stateChange) => {
     }
 };
 
-//do not change state in this func
+//do not change __state in this func
 const onStateStateChange = (oldState, newState, stateChanges) => {
     console.log('diff='+JSON.stringify(stateChanges));
 };
 
-//this will commit all state changes;
+//this will commit all __state changes;
 const stateCommit = () => {
 
-    const oldState = state;
+    const oldState = __state;
 
     let allStateChanges = {};
     stateChanges.forEach((change) => {
@@ -112,26 +112,26 @@ const stateCommit = () => {
     });
     stateChanges = [];
 
-    const newState = {...state, ...allStateChanges};
+    const newState = {...__state, ...allStateChanges};
 
     onStateStateChange(oldState,newState,allStateChanges);
 
-    state = newState;
+    __state = newState;
     shouldCommitState = false;
 };
 
 
 async function turnCoolingIfNeeded() {
     Settings.findAll().then(settings => settings[0]).then(s => {
-        if (state.t > s.tHigh) {
+        if (__state.t > s.tHigh) {
             rpio.write(FRIDGE_PIN, rpio.LOW);
-            state.coolingOn = true;
+            __state.coolingOn = true;
             console.log("Fridge is on");
         }
 
-        if (state.t < s.tLow) {
+        if (__state.t < s.tLow) {
             rpio.write(FRIDGE_PIN, rpio.HIGH);
-            state.coolingOn = false;
+            __state.coolingOn = false;
             console.log("Fridge is off");
         }
 
@@ -158,21 +158,21 @@ async function turnSonicIfNeeded() {
 const fanOn = (on = true) => {
 
     rpio.write(FAN_PIN, on ? rpio.HIGH : rpio.LOW);
-    state.fanOn = on;
+    __state.fanOn = on;
     console.log("Fan is ", (on ? "on" : "off"));
 
 };
 
 const turnFanIfNeeded = async = () => {
 
-    if (state.coolingOn) {
+    if (__state.coolingOn) {
         fanOn(true);
     } else {
-        if (Math.abs(state.t - state.tFrost) > T_DIFF_HIGH_FAN_ON) {
+        if (Math.abs(__state.t - __state.tFrost) > T_DIFF_HIGH_FAN_ON) {
             fanOn(true);
         }
 
-        if (Math.abs(state.t - state.tFrost) < T_DIFF_LOW_FAN_OFF) {
+        if (Math.abs(__state.t - __state.tFrost) < T_DIFF_LOW_FAN_OFF) {
             fanOn(false);
         }
     }
@@ -216,25 +216,25 @@ async function displayLoop() {
     let ty = 110;
 
     display.image.filledRectangle(tx, 0, display.width, display.height, display.colors.black);
-    display.image.stringFT(display.colors.white, font1, 72, 0, tx + 10, ty, state.t.toFixed(1));
+    display.image.stringFT(display.colors.white, font1, 72, 0, tx + 10, ty, __state.t.toFixed(1));
     display.image.stringFT(display.colors.white, font2, 28, 0, tx + 175, ty - 45, "°C");
     display.image.stringFT(display.colors.white, font2, 20, 0, tx + 12, ty - 72, "temperature");
 
 
     ty = 360;
-    display.image.stringFT(display.colors.white, font1, 72, 0, tx + 10, ty, state.h.toFixed(0));
+    display.image.stringFT(display.colors.white, font1, 72, 0, tx + 10, ty, __state.h.toFixed(0));
     display.image.stringFT(display.colors.white, font2, 28, 0, tx + 119, ty - 45, "%");
     display.image.stringFT(display.colors.white, font2, 20, 0, tx + 12, ty - 72, "humidity");
 
     let fan, flake;
-    if (state.fanOn) {
+    if (__state.fanOn) {
         fan = gd.openFile('./fan-solid.gif');
         display.addImage(fan, tx + 30, ty - 200, 2, display.colors.white);
     } else {
         display.image.filledRectangle(tx + 30, ty - 200, tx + 30 + 64, ty - 200 + 64, display.colors.black);
     }
 
-    if (state.coolingOn) {
+    if (__state.coolingOn) {
         flake = gd.openFile('./snowflake.gif');
         display.addImage(flake, tx + 120, ty - 200, 2, display.colors.white);
     } else {
@@ -242,11 +242,11 @@ async function displayLoop() {
     }
 
     for (let i = 0; i < DATA_DEEP - 1; i++) {
-        const y0h = H_ZERO_Y - state.hData[i];
-        const y1h = H_ZERO_Y - state.hData[i + 1];
+        const y0h = H_ZERO_Y - __state.hData[i];
+        const y1h = H_ZERO_Y - __state.hData[i + 1];
 
-        const y0t = T_ZERO_Y - state.tData[i] * 8;
-        const y1t = T_ZERO_Y - state.tData[i + 1] * 8;
+        const y0t = T_ZERO_Y - __state.tData[i] * 8;
+        const y1t = T_ZERO_Y - __state.tData[i + 1] * 8;
 
         const x0 = ZERO_X + i * STEP_X;
         const x1 = ZERO_X + (i + 1) * STEP_X;
@@ -268,24 +268,24 @@ async function displayLoop() {
     display.image.line(ZERO_X + 1, H_ZERO_Y, ZERO_X + 1, H_ZERO_Y - 100, display.colors.black);
 
     //limits
-    display.image.line(ZERO_X, T_ZERO_Y - state.tLow * 8, END_X, T_ZERO_Y - state.tLow * 8, display.colors.black);
-    display.image.line(ZERO_X, T_ZERO_Y + 1 - state.tLow * 8, END_X, T_ZERO_Y + 1 - state.tLow * 8, display.colors.black);
+    display.image.line(ZERO_X, T_ZERO_Y - __state.tLow * 8, END_X, T_ZERO_Y - __state.tLow * 8, display.colors.black);
+    display.image.line(ZERO_X, T_ZERO_Y + 1 - __state.tLow * 8, END_X, T_ZERO_Y + 1 - __state.tLow * 8, display.colors.black);
 
-    display.image.line(ZERO_X, T_ZERO_Y - state.tHigh * 8, END_X, T_ZERO_Y - state.tHigh * 8, display.colors.black);
-    display.image.line(ZERO_X, T_ZERO_Y + 1 - state.tHigh * 8, END_X, T_ZERO_Y + 1 - state.tHigh * 8, display.colors.black);
+    display.image.line(ZERO_X, T_ZERO_Y - __state.tHigh * 8, END_X, T_ZERO_Y - __state.tHigh * 8, display.colors.black);
+    display.image.line(ZERO_X, T_ZERO_Y + 1 - __state.tHigh * 8, END_X, T_ZERO_Y + 1 - __state.tHigh * 8, display.colors.black);
 
     //limits
-    display.image.line(ZERO_X, H_ZERO_Y - state.hLow, END_X, H_ZERO_Y - state.hLow, display.colors.black);
-    display.image.line(ZERO_X, H_ZERO_Y + 1 - state.hLow, END_X, H_ZERO_Y + 1 - state.hLow, display.colors.black);
+    display.image.line(ZERO_X, H_ZERO_Y - __state.hLow, END_X, H_ZERO_Y - __state.hLow, display.colors.black);
+    display.image.line(ZERO_X, H_ZERO_Y + 1 - __state.hLow, END_X, H_ZERO_Y + 1 - __state.hLow, display.colors.black);
 
-    display.image.line(ZERO_X, H_ZERO_Y - state.hHigh, END_X, H_ZERO_Y - state.hHigh, display.colors.black);
-    display.image.line(ZERO_X, H_ZERO_Y + 1 - state.hHigh, END_X, H_ZERO_Y + 1 - state.hHigh, display.colors.black);
+    display.image.line(ZERO_X, H_ZERO_Y - __state.hHigh, END_X, H_ZERO_Y - __state.hHigh, display.colors.black);
+    display.image.line(ZERO_X, H_ZERO_Y + 1 - __state.hHigh, END_X, H_ZERO_Y + 1 - __state.hHigh, display.colors.black);
 
-    display.image.stringFT(display.colors.black, font2, 12, 0, ZERO_X + 4, H_ZERO_Y - state.hHigh - 4, state.hHigh.toFixed(0) + '%');
-    display.image.stringFT(display.colors.black, font2, 12, 0, ZERO_X + 4, H_ZERO_Y - state.hLow + 14, state.hLow.toFixed(0) + '%');
+    display.image.stringFT(display.colors.black, font2, 12, 0, ZERO_X + 4, H_ZERO_Y - __state.hHigh - 4, __state.hHigh.toFixed(0) + '%');
+    display.image.stringFT(display.colors.black, font2, 12, 0, ZERO_X + 4, H_ZERO_Y - __state.hLow + 14, __state.hLow.toFixed(0) + '%');
 
-    display.image.stringFT(display.colors.black, font2, 12, 0, ZERO_X + 4, T_ZERO_Y - state.tHigh * 8 - 4, state.tHigh.toFixed(0) + '°C');
-    display.image.stringFT(display.colors.black, font2, 12, 0, ZERO_X + 4, T_ZERO_Y - state.tLow * 8 + 14, state.tLow.toFixed(0) + '°C');
+    display.image.stringFT(display.colors.black, font2, 12, 0, ZERO_X + 4, T_ZERO_Y - __state.tHigh * 8 - 4, __state.tHigh.toFixed(0) + '°C');
+    display.image.stringFT(display.colors.black, font2, 12, 0, ZERO_X + 4, T_ZERO_Y - __state.tLow * 8 + 14, __state.tLow.toFixed(0) + '°C');
 
     display.update();
 
@@ -311,27 +311,27 @@ async function updateState() {
         hData.push(h);
     }
 
-    state.hData = hData.reverse();
-    state.tData = tData.reverse();
+    __state.hData = hData.reverse();
+    __state.tData = tData.reverse();
 
     console.log(tData);
     console.log(hData);
 
     const settings = await Settings.findAll();
-    state.tLow = Math.round(settings[0].tLow);
-    state.tHigh = Math.round(settings[0].tHigh);
-    state.hLow = Math.round(settings[0].hLow);
+    __state.tLow = Math.round(settings[0].tLow);
+    __state.tHigh = Math.round(settings[0].tHigh);
+    __state.hLow = Math.round(settings[0].hLow);
 
-    state.hHigh = Math.round(settings[0].hHigh);
+    __state.hHigh = Math.round(settings[0].hHigh);
     const tFrost = await Readings.findAll({limit: 1, order: [['id', 'DESC']], where: {sensorID: 1}});
-    state.tFrost = tFrost[0].temperature;
-    state.t = (data[1].temperature + data[2].temperature + data[3].temperature) / 3.0;
-    state.h = (data[1].humidity + data[2].humidity + data[3].humidity) / 3.0;
+    __state.tFrost = tFrost[0].temperature;
+    __state.t = (data[1].temperature + data[2].temperature + data[3].temperature) / 3.0;
+    __state.h = (data[1].humidity + data[2].humidity + data[3].humidity) / 3.0;
 
     await turnCoolingIfNeeded();
     await turnSonicIfNeeded();
     await turnFanIfNeeded();
-    console.log(state);
+    console.log(__state);
 }
 
 

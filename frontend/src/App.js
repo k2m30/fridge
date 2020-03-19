@@ -12,9 +12,11 @@ class App extends Component {
                 <h2>
                     Prosciutto di hackerspace
                 </h2>
-                <div><Sensors/></div>
                 <div><State/></div>
+                <hr/>
                 <div><Controls/></div>
+                <hr/>
+                <div><Sensors/></div>
             </div>
 
         );

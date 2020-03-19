@@ -49,7 +49,6 @@ class Controls extends Component {
                 <label htmlFor="h-high">h high, %</label>
                 <input type="text" id={'h-high'} onChange={this.changeThreshold}/>
 
-                <hr/>
             </div>
 
         )

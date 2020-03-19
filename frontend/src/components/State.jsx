@@ -23,9 +23,8 @@ class State extends Component {
         }
     };
 
-    // bgTemp = ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)'];
-    bgTemp = ['rgba(170,99,99,0.2)', 'rgba(255, 99, 132, 0.2)', 'rgba(255, 99, 132, 0.2)', 'rgba(255, 99, 132, 0.2)'];
-    bgHumidity = ['rgba(59,93,170,0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(54, 162, 235, 0.2)'];
+    bgTemp = ['rgba(170,99,99,0.2)', 'rgba(255, 99, 132, 0.5)'];
+    bgHumidity = ['rgba(59,93,170,0.2)', 'rgba(54, 162, 235, 0.5)', 'rgba(255, 99, 132, 0.2)'];
     borderColors = ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)'];
 
     constructor() {
@@ -42,28 +41,57 @@ class State extends Component {
     }
 
     getData() {
-        let datasets_temperature = [], datasets_humidity = [];
+        let datasets_temperature = [], datasets_humidity = [], dataset_cooling = [], dataset_internal_fan = [],
+            dataset_external_fan = [];
         fetch('http://' + window.location.hostname + ':3000/state').then((res) => {
             return res.json();
         }).then((state) => {
 
-                    datasets_temperature = [{
-                        label: 't',
+                datasets_temperature = [
+                    {
+                        label: 'temperature',
                         data: state.map(r => r.t),
                         backgroundColor: this.bgTemp[0],
                         borderColor: this.borderColors[0],
                         borderWidth: 0.2,
                         pointRadius: 1.0
-                    }];
+                    },
+                    {
+                        label: 'cooling',
+                        data: state.map(r => r.coolingOn * 5),
+                        backgroundColor: this.bgTemp[1],
+                        borderColor: this.borderColors[1],
+                        borderWidth: 0.2,
+                        pointRadius: 1.0
+                    }
+                ];
 
-                    datasets_humidity = [{
-                        label: 'h',
+                datasets_humidity = [
+                    {
+                        label: 'humidity',
                         data: state.map(r => r.h),
                         backgroundColor: this.bgHumidity[0],
-                        borderColor: this.borderColors[1],
+                        borderColor: this.borderColors[2],
                         borderWidth: 0.1,
                         pointRadius: 1.0
-                    }];
+                    },
+                    {
+                        label: 'internalFanOn',
+                        data: state.map(r => r.internalFanOn * 50),
+                        backgroundColor: this.bgHumidity[1],
+                        borderColor: this.borderColors[3],
+                        borderWidth: 0.1,
+                        pointRadius: 1.0
+                    },
+                    {
+                        label: 'externalFanOn',
+                        data: state.map(r => r.externalFanOn * 50),
+                        backgroundColor: this.bgHumidity[2],
+                        borderColor: this.borderColors[3],
+                        borderWidth: 0.1,
+                        pointRadius: 1.0
+                    }
+                ];
 
 
                 console.log(datasets_temperature);

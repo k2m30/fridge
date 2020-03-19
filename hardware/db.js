@@ -7,6 +7,8 @@ module.exports = {
     },
     Setting: class extends SQLite3.Model {
     },
+    State: class extends SQLite3.Model {
+    },
     init: function () {
         const sequelize = new SQLite3({
             dialect: 'sqlite',
@@ -72,8 +74,38 @@ module.exports = {
                 sequelize
             });
 
+        this.State.init({
+                coolingOn: {
+                    type: SQLite3.BOOLEAN,
+                    allowNull: false
+                },
+                internalFanOn: {
+                    type: SQLite3.BOOLEAN,
+                    allowNull: false
+                },
+                externalFanOn: {
+                    type: SQLite3.BOOLEAN,
+                    allowNull: false
+                },
+                t: {
+                    type: SQLite3.FLOAT,
+                    allowNull: false
+                },
+                h: {
+                    type: SQLite3.FLOAT,
+                    allowNull: false
+                },
+            },
+            {
+                sequelize,
+                timestamps: true
+            });
+
         // this.Reading.sync({force: true}).then(() => {
         this.Reading.sync().then(() => {
+        });
+
+        this.State.sync().then(() => {
         });
 
         // this.Setting.sync({force: true}).then(() => {

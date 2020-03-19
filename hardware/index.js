@@ -12,7 +12,7 @@ const os = require('os');
 db.init();
 
 //physical pins
-const FAN_PIN = 32;
+const INTERNAL_FAN_PIN = 32;
 const FRIDGE_PIN = 36;
 const DOOR_PIN = 12;
 const DATA_DEEP = 50;
@@ -35,13 +35,14 @@ if (os.arch() === 'arm') {
     console.warn("Not using GPIO", os.arch());
 }
 rpio.open(FRIDGE_PIN, rpio.OUTPUT);
-rpio.open(FAN_PIN, rpio.OUTPUT);
+rpio.open(INTERNAL_FAN_PIN, rpio.OUTPUT);
 rpio.open(DOOR_PIN, rpio.INPUT);
 
 const display = new Display(rpio);
 
 const Readings = db.Reading;
 const Settings = db.Setting;
+const State = db.State;
 
 const Sensor = hw.Sensor;
 const sensor_1 = new Sensor({bus: 4});
@@ -69,7 +70,8 @@ let __state = {
     h_3: 0,
 
     coolingOn: false,
-    fanOn: false,
+    internalFanOn: false,
+    externalFanOn: false,
     tHigh: 0,
     tLow: 0,
     hHigh: 0,
@@ -155,25 +157,25 @@ async function turnSonicIfNeeded() {
 
 }
 
-const fanOn = (on = true) => {
+const internalFanOn = (on = true) => {
 
-    rpio.write(FAN_PIN, on ? rpio.HIGH : rpio.LOW);
-    __state.fanOn = on;
-    console.log("Fan is ", (on ? "on" : "off"));
+    rpio.write(INTERNAL_FAN_PIN, on ? rpio.HIGH : rpio.LOW);
+    __state.internalFanOn = on;
+    console.log("Internal fan is ", (on ? "on" : "off"));
 
 };
 
 const turnFanIfNeeded = async = () => {
 
     if (__state.coolingOn) {
-        fanOn(true);
+        internalFanOn(true);
     } else {
         if (Math.abs(__state.t - __state.tFrost) > T_DIFF_HIGH_FAN_ON) {
-            fanOn(true);
+            internalFanOn(true);
         }
 
         if (Math.abs(__state.t - __state.tFrost) < T_DIFF_LOW_FAN_OFF) {
-            fanOn(false);
+            internalFanOn(false);
         }
     }
 
@@ -227,7 +229,7 @@ async function displayLoop() {
     display.image.stringFT(display.colors.white, font2, 20, 0, tx + 12, ty - 72, "humidity");
 
     let fan, flake;
-    if (__state.fanOn) {
+    if (__state.internalFanOn) {
         fan = gd.openFile('./fan-solid.gif');
         display.addImage(fan, tx + 30, ty - 200, 2, display.colors.white);
     } else {
@@ -331,6 +333,7 @@ async function updateState() {
     await turnCoolingIfNeeded();
     await turnSonicIfNeeded();
     await turnFanIfNeeded();
+    await State.create({t: __state.t, h: __state.h, coolingOn: __state.coolingOn, internalFanOn: __state.internalFanOn, externalFanOn: __state.externalFanOn});
     console.log(__state);
 }
 
@@ -352,6 +355,14 @@ async function main() {
             limit: 1200, order: [['id', 'DESC']]
         }).then(readings => {
             res.json(readings.reverse());
+        });
+    });
+
+    app.get('/state', (req, res) => {
+        State.findAll({
+            limit: 1200, order: [['id', 'DESC']]
+        }).then(state => {
+            res.json(state.reverse());
         });
     });
 

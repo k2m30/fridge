@@ -377,7 +377,9 @@ async function main() {
 
     app.post('/thresholds', (req, res, next) => {
         Settings.findAll().then(settings => settings[0]).then(settings => {
-            settings.update(req.body)
+            settings.update(req.body);
+            // console.log(req.body);
+            return res.json("ok");
         });
     });
 

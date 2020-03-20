@@ -50,7 +50,7 @@ class State extends Component {
                 datasets_temperature = [
                     {
                         label: 'temperature',
-                        data: state.map(r => r.t),
+                        data: state.map(r => Math.round(r.t * 100) / 100),
                         backgroundColor: this.bgTemp[0],
                         borderColor: this.borderColors[0],
                         borderWidth: 0.2,
@@ -69,7 +69,7 @@ class State extends Component {
                 datasets_humidity = [
                     {
                         label: 'humidity',
-                        data: state.map(r => r.h),
+                        data: state.map(r => Math.round(r.h * 100) / 100),
                         backgroundColor: this.bgHumidity[0],
                         borderColor: this.borderColors[2],
                         borderWidth: 0.1,
@@ -122,6 +122,8 @@ class State extends Component {
 
                             }),
                         },
+                    average_humidity: Math.round(state.map(r => r.h).reduce((p, c) => p + c, 0) / state.length * 100) / 100,
+                    current_temperature: Math.round(state[state.length - 1].t * 100) / 100,
                 });
                 console.log(this.state);
             }
@@ -132,7 +134,7 @@ class State extends Component {
     render() {
         return (
             <div>
-                <p>Temperature</p>
+                <p>Temperature = {this.state.current_temperature}</p>
                 <div>
                     <Line id={'temperature'}
                           data={this.state.data_temperature}
@@ -141,7 +143,8 @@ class State extends Component {
                           width={500}/>
                 </div>
 
-                <p>Humidity</p>
+                <p>Humidity </p>
+                <p>Average humidity = {this.state.average_humidity}</p>
                 <div>
                     <Line id={'humidity'}
                           data={this.state.data_humidity}

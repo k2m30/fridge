@@ -51,7 +51,6 @@ const sensor_3 = new Sensor({bus: 3});
 const sensor_4 = new Sensor({bus: 1});
 
 
-
 let __state = {
     t: 0,
     h: 0,
@@ -100,7 +99,7 @@ const setState = (stateChange) => {
 
 //do not change __state in this func
 const onStateStateChange = (oldState, newState, stateChanges) => {
-    console.log('diff='+JSON.stringify(stateChanges));
+    console.log('diff=' + JSON.stringify(stateChanges));
 };
 
 //this will commit all __state changes;
@@ -110,13 +109,13 @@ const stateCommit = () => {
 
     let allStateChanges = {};
     stateChanges.forEach((change) => {
-       allStateChanges = {...allStateChanges, ...change};
+        allStateChanges = {...allStateChanges, ...change};
     });
     stateChanges = [];
 
     const newState = {...__state, ...allStateChanges};
 
-    onStateStateChange(oldState,newState,allStateChanges);
+    onStateStateChange(oldState, newState, allStateChanges);
 
     __state = newState;
     shouldCommitState = false;
@@ -168,13 +167,11 @@ const internalFanOn = (on = true) => {
 const turnFanIfNeeded = async = () => {
 
     if (__state.coolingOn) {
-        internalFanOn(true);
+        internalFanOn(false);
     } else {
-        if (Math.abs(__state.t - __state.tFrost) > T_DIFF_HIGH_FAN_ON) {
+        if (Math.abs(__state.t - __state.tHigh) < T_DIFF_LOW_FAN_OFF) {
             internalFanOn(true);
-        }
-
-        if (Math.abs(__state.t - __state.tFrost) < T_DIFF_LOW_FAN_OFF) {
+        } else {
             internalFanOn(false);
         }
     }
@@ -333,7 +330,13 @@ async function updateState() {
     await turnCoolingIfNeeded();
     await turnSonicIfNeeded();
     await turnFanIfNeeded();
-    await State.create({t: __state.t, h: __state.h, coolingOn: __state.coolingOn, internalFanOn: __state.internalFanOn, externalFanOn: __state.externalFanOn});
+    await State.create({
+        t: __state.t,
+        h: __state.h,
+        coolingOn: __state.coolingOn,
+        internalFanOn: __state.internalFanOn,
+        externalFanOn: __state.externalFanOn
+    });
     console.log(__state);
 }
 
@@ -390,7 +393,6 @@ async function main() {
     await displayLoop();
 
 }
-
 
 
 main();

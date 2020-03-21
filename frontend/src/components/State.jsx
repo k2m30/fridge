@@ -146,7 +146,7 @@ class State extends Component {
                 </div>
 
                 <p>Humidity = {this.state.current_humidity}%</p>
-                <p>Average humidity = {this.state.average_humidity}</p>
+                <p>Average humidity = {this.state.average_humidity}%</p>
                 <div>
                     <Line id={'humidity'}
                           data={this.state.data_humidity}

@@ -41,8 +41,7 @@ class State extends Component {
     }
 
     getData() {
-        let datasets_temperature = [], datasets_humidity = [], dataset_cooling = [], dataset_internal_fan = [],
-            dataset_external_fan = [];
+        let datasets_temperature = [], datasets_humidity = [];
         fetch('http://' + window.location.hostname + ':3000/state').then((res) => {
             return res.json();
         }).then((state) => {
@@ -123,6 +122,7 @@ class State extends Component {
                             }),
                         },
                     average_humidity: Math.round(state.map(r => r.h).reduce((p, c) => p + c, 0) / state.length * 100) / 100,
+                    average_temperature: Math.round(state.map(r => r.t).reduce((p, c) => p + c, 0) / state.length * 100) / 100,
                     current_temperature: Math.round(state[state.length - 1].t * 100) / 100,
                     current_humidity: Math.round(state[state.length - 1].h * 100) / 100,
                 });
@@ -136,6 +136,7 @@ class State extends Component {
         return (
             <div>
                 <p>Temperature = {this.state.current_temperature}°</p>
+                <p>Average Temperature = {this.state.average_temperature}°</p>
                 <div>
                     <Line id={'temperature'}
                           data={this.state.data_temperature}

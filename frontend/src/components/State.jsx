@@ -124,6 +124,7 @@ class State extends Component {
                         },
                     average_humidity: Math.round(state.map(r => r.h).reduce((p, c) => p + c, 0) / state.length * 100) / 100,
                     current_temperature: Math.round(state[state.length - 1].t * 100) / 100,
+                    current_humidity: Math.round(state[state.length - 1].h * 100) / 100,
                 });
                 console.log(this.state);
             }
@@ -134,7 +135,7 @@ class State extends Component {
     render() {
         return (
             <div>
-                <p>Temperature = {this.state.current_temperature}</p>
+                <p>Temperature = {this.state.current_temperature}°</p>
                 <div>
                     <Line id={'temperature'}
                           data={this.state.data_temperature}
@@ -143,7 +144,7 @@ class State extends Component {
                           width={500}/>
                 </div>
 
-                <p>Humidity </p>
+                <p>Humidity = {this.state.current_humidity}%</p>
                 <p>Average humidity = {this.state.average_humidity}</p>
                 <div>
                     <Line id={'humidity'}

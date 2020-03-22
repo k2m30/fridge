@@ -13,6 +13,7 @@ db.init();
 
 //physical pins
 const INTERNAL_FAN_PIN = 32;
+const EXTERNAL_FAN_PIN = 13;
 const FRIDGE_PIN = 36;
 const DOOR_PIN = 12;
 const DATA_DEEP = 50;
@@ -36,6 +37,7 @@ if (os.arch() === 'arm') {
 }
 rpio.open(FRIDGE_PIN, rpio.OUTPUT);
 rpio.open(INTERNAL_FAN_PIN, rpio.OUTPUT);
+rpio.open(EXTERNAL_FAN_PIN, rpio.OUTPUT);
 rpio.open(DOOR_PIN, rpio.INPUT);
 
 const display = new Display(rpio);

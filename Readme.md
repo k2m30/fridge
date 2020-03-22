@@ -52,9 +52,9 @@ in other terminal
 | Yellow  | SDA1 (Sensor 4) | |3 | 4 | | 5V | 
 | White  | SCL1 (Sensor 4)  | |5 | 6 | | GND | Black
 |   |   | |7 | 8 | |  | 
-|   |   | |9 | 10 | |  | 
+| Black  | GND  | |9 | 10 | |  | 
 | White  | RST (Disp)  | 17 |11 | 12 |18 | Door IN | Yellow
-| Blue   | Relay 1  | 27|13 | 14 | |  | 
+| Blue   | Relay 1 (External Fan, GPIO 2)  | 27|13 | 14 | |  | 
 |   |   | |15 | 16 | |  | 
 |   |   | |17 | 18 | 24 | Busy (Disp) | Violet 
 | Blue   | DIN (Disp)  | MOSI |19 | 20 | |  | 
@@ -63,7 +63,7 @@ in other terminal
 |   |   | |25 | 26 | |  | 
 |   |   | |27 | 28 | |  | 
 |   |   | |29 | 30 | |  | 
-| Yellow  | SDA5 (Sensor 2)  | 6 |31 | 32 |12 | Relay 2 (Fan, GPIO 26) | Green 
+| Yellow  | SDA5 (Sensor 2)  | 6 |31 | 32 |12 | Relay 2 (Internal Fan, GPIO 26) | Green 
 | White  | SCL5 (Sensor 2)  |13 |33 | 34 | | GND | 
 | Yellow  | SDA3 (Sensor 3)  | 19|35 | 36 |16 | Relay 3 (Fridge, GPIO 27) | Yellow
 | White  | SCL3 (sensor 3)  | 26|37 | 38 | | SDA4 (Sensor 1) | Yellow

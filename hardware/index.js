@@ -166,15 +166,29 @@ const internalFanOn = (on = true) => {
 
 };
 
+const externalFanOn = (on = true) => {
+
+    rpio.write(EXTERNAL_FAN_PIN, on ? rpio.HIGH : rpio.LOW);
+    __state.externalFanOn = on;
+    console.log("External fan is ", (on ? "on" : "off"));
+
+};
+
 const turnFanIfNeeded = async = () => {
 
     if (__state.coolingOn) {
         internalFanOn(false);
+        externalFanOn(false);
     } else {
-        if (Math.abs(__state.t - __state.tHigh) < T_DIFF_LOW_FAN_OFF) {
+        if (__state.h > __state.hHigh) {
             internalFanOn(true);
-        } else {
+            externalFanOn(true);
+
+        }
+        if (__state.h < __state.hLow) {
             internalFanOn(false);
+            externalFanOn(false);
+
         }
     }
 
